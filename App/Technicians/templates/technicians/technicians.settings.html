@@ -1,0 +1,414 @@
+{% extends 'technicians.base.html' %}
+
+{% block head %}
+<style>
+  body {
+    background: #f8fafc;
+  }
+
+  .container {
+    max-width: 950px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    padding: 32px 28px 24px 28px;
+    margin-top: 32px;
+  }
+
+  .section-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title i {
+    color: #3a86ff;
+    font-size: 1.3em;
+  }
+
+  hr {
+    border-top: 1.5px solid #e9ecef;
+    margin: 18px 0;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #22223b;
+    margin-bottom: 6px;
+  }
+
+  .form-control,
+  textarea {
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    font-size: 15px;
+    padding: 10px 12px;
+    background: #f6f7fb;
+    transition: border-color 0.2s;
+  }
+
+  .form-control:focus,
+  textarea:focus {
+    border-color: #000;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  .stat-card {
+    background: #f6f7fb;
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .stat-card h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 2px;
+  }
+
+  .stat-card label {
+    font-size: 1rem;
+    color: #22223b;
+    font-weight: 500;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  #save-btn {
+    min-width: 140px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 0;
+    background: linear-gradient(90deg, #000 70%, #000 100%);
+    border: none;
+  }
+
+  #save-btn:hover {
+    background: linear-gradient(90deg, #000 70%, #000 100%);
+  }
+
+  #create-business-btn {
+    min-width: 160px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 0;
+    background: #22223b;
+    color: #fff;
+    border: none;
+  }
+
+  #create-business-btn:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  .business-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(58, 134, 255, 0.07);
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.2s;
+    border: none;
+  }
+
+  .business-card:hover {
+    box-shadow: 0 4px 24px rgba(58, 134, 255, 0.13);
+  }
+
+  .business-card img {
+    height: 170px;
+    object-fit: cover;
+    width: 100%;
+    background: #e9ecef;
+  }
+
+  .card-title {
+    font-weight: 700;
+    color: #22223b;
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .card-text {
+    color: #495057;
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .business-card .btn {
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 7px;
+    background: #3a86ff;
+    color: #fff;
+    border: none;
+    padding: 7px 18px;
+  }
+
+  .business-card .btn:hover {
+    background: #22223b;
+  }
+
+  /* Modal styling */
+  .modal-content {
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(58, 134, 255, 0.09);
+    border: none;
+  }
+
+  .modal-title {
+    font-weight: 700;
+    color: #22223b;
+  }
+
+  .modal-footer .btn-success {
+    background: linear-gradient(90deg, #000 70%, #000 100%);
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    min-width: 130px;
+  }
+
+  .modal-footer .btn-outline-secondary {
+    border-radius: 8px;
+    min-width: 110px;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
+    .container {
+      padding: 18px 8px;
+    }
+
+    .business-card img {
+      height: 120px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="section-title mt-2 mb-1">
+    <i class="bi bi-person-fill text-dark"></i>
+    Personal Information
+  </div>
+  <hr>
+  <form action="" class="pb-4 pt-2">
+    <div class="row g-4">
+      {% for field, label, type, placeholder, value in [
+      ('username', 'Username:', 'text', 'e.g. John Doe', current_user.username),
+      ('email', 'Email:', 'email', 'e.g. john.doe@example.com', current_user.email),
+      ('phone_number', 'Phone Number:', 'tel', 'e.g. +233 24 000 0000', current_user.phone_number),
+      ('password', 'Password:', 'password', '**********', ''),
+      ] %}
+      <div class="col-md-6">
+        <label class="form-label">{{ label }}</label>
+        <input type="{{ type }}" class="form-control" placeholder="{{ placeholder }}" value="{{ value }}">
+      </div>
+      {% endfor %}
+      <div class="col-md-6">
+        <div class="stat-card">
+          <label>Business Profiles</label>
+          <h2> {{ context.number_of_profile }}</h2>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="stat-card">
+          <label>Received Bookings</label>
+          <h2>{{ context.total_bookings }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="buttons">
+      <button class="btn btn-success" id="save-btn" type="submit">Save Changes</button>
+    </div>
+  </form>
+  <hr>
+
+  <div class="d-flex justify-content-between align-items-center mb-3 mt-5">
+    <div class="section-title mb-0" style="font-size:1.3rem;">
+      <i class="bi bi-building text-dark" ></i>
+      My Business Profiles
+    </div>
+    <button class="btn" id="create-business-btn" data-bs-toggle="modal" data-bs-target="#createBusinessModal">
+      <i class="bi bi-plus-lg"></i> Create Profile
+    </button>
+  </div>
+
+  <div class="row g-4">
+    <!-- Example Business Profile -->
+     {% if context.business_profiles == [] %}
+        <h6 class="text-center py-3 d-block">No Business Profiles Found</h2>
+
+    {% else %}
+      {% for profile in context.business_profiles %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card business-card">
+          <img src="data:image/png;base64,{{ profile.Display_photo() }}" class="card-img-top" alt="Business Image">
+          <div class="card-body">
+            <h5 class="card-title">{{ profile.name }}</h5>
+            <p class="card-text">{{ profile.description }}</p>
+            <button class="btn bg-dark"  data-bs-toggle="modal" data-bs-target="#businessProfileModal{{ profile.id }}">View Details</button>
+            <!-- Delete Business Profile Button (triggers modal) -->
+            <button type="button" class="btn btn-success bg-danger" data-bs-toggle="modal" data-bs-target="#deleteBusinessModal{{ profile.id }}">
+              <i class="bi bi-trash"></i>
+            </button>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteBusinessModal{{ profile.id }}" tabindex="-1" aria-labelledby="deleteBusinessModalLabel{{ profile.id }}" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="deleteBusinessModalLabel{{ profile.id }}">
+                  <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+                  Delete Business Profile
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ profile.name }}</strong>? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="/technician/delete_business_profile?id={{ profile.id }}" class="btn btn-danger">Delete</a>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Business Profile Details Modal Trigger -->
+
+      <!-- Business Profile Details Modal -->
+      <div class="modal fade" id="businessProfileModal{{ profile.id }}" tabindex="-1" aria-labelledby="businessProfileModalLabel{{ profile.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content" style="border-radius: 18px; box-shadow: 0 8px 32px rgba(58,134,255,0.18); border: none;">
+            <div class="modal-header" style="background: linear-gradient(90deg, #000 60%, #000 100%); border-bottom: none;">
+              <h4 class="modal-title fw-bold text-white" id="businessProfileModalLabel{{ profile.id }}">
+                <i class="bi bi-building me-2"></i>{{ profile.name }}
+              </h4>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-4" style="background: #f8fafc;">
+              <div class="row g-4 align-items-center">
+                <div class="col-md-5">
+                  <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="Business Image" class="img-fluid rounded-4 shadow" style="max-height: 320px; object-fit: cover; background: #e9ecef;">
+                </div>
+                <div class="col-md-7">
+                  <h3 class="fw-bold mb-2" style="color: #22223b;">{{ profile.name }}</h3>
+                  <span class="badge bg-dark mb-3" style="font-size: 0.7rem; padding: 8px 16px; border-radius: 8px;">
+                    <i class="bi bi-geo-alt-fill me-1"></i> {{ profile.location }}
+                  </span>
+                  <p class="mb-3" style="font-size: 1.1rem; color: #495057;">{{ profile.description }}</p>
+                  <div class="mb-3">
+                    <label class="fw-semibold" style="color: #22223b; font-size: 1.1rem;">Services Offered:</label>
+                    <ul class="list-unstyled mb-0 mx-1" style="color: #495057; font-size: 1rem;">
+                      {% for service in profile.get_services_list() %}
+                        <li style="font-size: .9rem;"><i class="bi bi-check-circle-fill text-dark"></i> {{ service }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <div class="mt-4">
+                    <span class="fw-semibold"  style="color: #22223b; font-size: 1.1rem;">Contact:</span>
+                    <div class="mt-1" style="font-size: 0.9rem;">
+                      <i class="bi bi-envelope-fill me-2"></i>{{ profile.technician.email }}
+                      <br>
+                      <i class="bi bi-telephone-fill me-2"></i>{{ profile.technician.phone_number }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer" style="background: #fff; border-top: none;">
+              <button type="button" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;" data-bs-dismiss="modal">Close</button>
+              <a href="/business/{{ profile.id }}/edit/" class="btn btn-primary px-4 py-2" style="border-radius: 10px; font-weight: 600;">
+                <i class="bi bi-pencil-square me-1"></i>Edit Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+    <!-- Duplicate above block for other business profiles -->
+  </div>
+</div>
+
+<!-- Modal: Create Business Profile -->
+<div class="modal fade" id="createBusinessModal" tabindex="-1" aria-labelledby="createBusinessModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form action="/technician/create_business/" method="POST" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createBusinessModalLabel">New Business Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Business Name</label>
+              <input type="text" class="form-control" placeholder="e.g. Smart Tech Repairs" name="business_name" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Location</label>
+              <input type="text" class="form-control" placeholder="e.g. Tamale" name="location" required>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Services Offered</label>
+              <div class="d-flex flex-wrap gap-3 mx-1">
+                {% for id, value, label in [
+                ('service1', 'Laptop repairs', 'Laptop Repairs'),
+                ('service2', 'Mobile phone repairs', 'Mobile Phone Repairs'),
+                ('service3', 'Smart device repairs', 'Smart Device Repairs'),
+                ] %}
+                <div>
+                  <input type="checkbox" id="{{ id }}" name="services" value="{{ value }}" >
+                  <label for="{{ id }}">{{ label }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Business Description</label>
+              <textarea class="form-control" rows="4" placeholder="Brief description of your business and services..."
+                name="business_description" required></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Upload Business Photo</label>
+              <input type="file" class="form-control" name="business_photo" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Create Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+</script>
+{% endblock %}

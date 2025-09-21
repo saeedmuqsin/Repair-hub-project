@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% block head %}
+<link rel="stylesheet" href="{{ url_for('users.static', filename='css/dashboard.css' )}}" />
+<link rel="stylesheet"
+  href="{{ url_for('static', filename = '/fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/fontawesome.min.css')}}" />
+<link rel="stylesheet"
+  href="{{ url_for('static', filename = '/fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/solid.css')}}" />
+{% endblock %} {% block content %}
+
+<!-- intro section of the page -->
+<section id="intro-section">
+  <div class="container">
+    <div class="intro-body">
+      <h2 style="font-size: 36px;">Fast, Affordable and Reliable Repairs</h2>
+      <p>For mobile phones, tablets, laptops.</p>
+      <a href="/users/appointment_booking" class="btn btn-dark">Book a Repair</a>
+    </div>
+    <img src="{{ url_for('users.static', filename='images/repairBg.jpg')}}" alt="" />
+  </div>
+</section>
+
+<!-- section display quality services -->
+<section id="services-section" class="bg-dark">
+  <div class="container">
+    <div class="service-card bg-light">
+      <i class="fa-solid fa-screwdriver-wrench"></i>
+      <h3>Trusted Professionals</h3>
+      <p>
+        Rely on our team of professional technicians. We have a vast network of
+        experts ready to assist you.
+      </p>
+    </div>
+
+    <div class="service-card bg-light">
+      <i class="fa-solid fa-rotate-left"></i>
+      <h3>Quick Turnaround</h3>
+      <p>
+        We aim to return your device as swiftly as possible, often completing
+        repairs in 30 minutes or less.
+      </p>
+    </div>
+
+    <div class="service-card bg-light">
+      <i class="fa-solid fa-stethoscope"></i>
+      <h3>Free Diagnostics</h3>
+      <p>
+        Unsure about the issue with your device? Don't worry, we offer a
+        g </p>
+    </div>
+  </div>
+</section>
+
+<!-- Repairs Section -->
+<section id="repair-section">
+  <h2 class="pt-5">All kind of repairs. For real.</h2>
+  <div class="container">
+
+    <div class="repair-card bg-dark text-light">
+      <img src="{{ url_for('users.static', filename='images/gadgets/Android.png' ) }}" alt="">
+      <h3>Andriod</h3>
+      <p class="text-left">We can do complex repairs like motherboard replacements.</p>
+    </div>
+    <div class="repair-card bg-dark text-light">
+      <img src="{{ url_for('users.static', filename='images/gadgets/iphone.png' ) }}" alt="">
+      <h3>Iphone</h3>
+      <p class="text-left">Cracked screens, water damage, battery problems, and more.</p>
+    </div>
+    <div class="repair-card bg-dark text-light">
+      <img src="{{ url_for('users.static', filename='images/gadgets/Tablet.png' ) }}" alt="">
+      <h3>Tablets</h3>
+      <p class="text-left">Fast and cost-effective solutions for all kinds of tablets.</p>
+    </div>
+    <div class="repair-card bg-dark text-light">
+      <img src="{{ url_for('users.static', filename='images/gadgets/laptop.png' ) }}" alt="">
+      <h3>Laptop</h3>
+      <p class="text-left">Cracked screens, battery problems, and software issues.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Offers section -->
+<div class="container my-4 bg-light" id="offer-section">
+  <h1 class="text-center mt-4">Get Your Mobile Device Repaired Today!</h1>
+  <p class="text-center py-2">We use only the highest quality parts and offer a wide range of repair services, from
+    simple screen replacements to complex motherboard repairs. We also offer same-day repairs in most cases!</p>
+  <a href="" class="text-center btn btn-dark mx-auto d-block">Book a Repair</a>
+</div>
+
+{% for message in get_flashed_messages() %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div class="toast d-block 
+      {% if message_category == 'success' %}bg-success text-white
+      {% elif message_category == 'error' %}bg-danger text-white
+      {% elif message_category == 'warning' %}bg-warning text-dark
+      {% elif message_category == 'info' %}bg-info text-dark
+      {% else %}bg-light text-dark{% endif %}" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header 
+        {% if message_category == 'success' %}bg-success text-white
+        {% elif message_category == 'error' %}bg-danger text-white
+        {% elif message_category == 'warning' %}bg-warning text-dark
+        {% elif message_category == 'info' %}bg-info text-dark
+        {% else %}bg-light text-dark{% endif %}">
+      <i class="bi 
+          {% if message_category == 'success' %}bi-check-circle-fill text-white
+          {% elif message_category == 'error' %}bi-x-circle-fill text-white
+          {% elif message_category == 'warning' %}bi-exclamation-triangle-fill text-dark
+          {% elif message_category == 'info' %}bi-info-circle-fill text-dark
+          {% else %}bi-info-circle text-dark{% endif %} me-2"></i>
+      <strong class="me-auto">
+        {% if message_category == 'success' %}Success
+        {% elif message_category == 'error' %}Error
+        {% elif message_category == 'warning' %}Warning
+        {% elif message_category == 'info' %}Info
+        {% else %}Notification{% endif %}
+      </strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      {{ message }}
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    toastElList.forEach(function (toastEl) {
+      var toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    });
+  });
+</script>
+{% endblock %}

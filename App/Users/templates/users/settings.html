@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet"
+  href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/fontawesome.min.css') }}" />
+<link rel="stylesheet"
+  href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/solid.css') }}" />
+
+
+<!-- custom styles -->
+<style>
+  .container {
+    width: 700px;
+    margin: auto;
+    padding: 10px;
+  }
+
+  .container .profile-img {
+    width: 100%;
+    height: 150px;
+    margin: 20px auto;
+    text-align: center;
+    display: block;
+  }
+
+  .profile-img img {
+    width: 100px;
+    height: 100px;
+    border: 5px solid #ffffffbb;
+    border-radius: 360%;
+    margin: 0px auto 10px auto;
+  }
+
+ 
+
+
+  /* Media Queries */
+  @media (max-width: 1200px) {
+    .container {
+      width: 90%;
+    }
+
+    .form-group input {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .container {
+      width: 95%;
+    }
+
+    .profile-img img {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 5px;
+    }
+
+    .form-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-group input {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .container h4{
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .profile-img {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .profile-img img {
+      width: 70px;
+      height: 70px;
+    }
+
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h4 class="px-2">
+    <span><i class="fa-solid fa-user" style="font-size: 23px; margin-right: 5px;"></i></span>
+    Personal Profile
+  </h4>
+  <hr>
+
+  <form action="/users/settings?id={{ current_user.id }}" method="POST" enctype="multipart/form-data">
+  
+    <div class="profile-img">
+      <img class="profile-icon" id="profilePhoto"
+        src="data:image/png;base64, {{ current_user.Display_UserProfilePhoto() }}"
+        alt="{{ current_user.username }}"></img>
+      <div class="buttons mx-3">
+        <input type="file" id="fileInput" name="profile-picture" style="display: none;">
+        <label for="fileInput" class="btn btn-primary">Change Photo</label>
+      </div>
+    </div>
+
+      <div class="pb-3">
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}"
+          required>
+      </div>
+
+      <div class="py-3">
+        <label for="phone" class="form-label">Phone-Number:</label>
+        <input type="text" class="form-control" id="phone" name="phone" value="{{ current_user.phone_number }}">
+      </div>
+
+
+    <div class="py-3">
+      <label for="email" class="form-label">Email address:</label>
+      <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+    </div>
+
+    <button type="submit" class="btn btn-success my-3">Update Profile</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // profile photo preview
+  document.getElementById('fileInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('profilePhoto').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+{% endblock %}
