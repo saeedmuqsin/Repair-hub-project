@@ -131,7 +131,3 @@ def Delete_BusinessProfile():
    flash("Business profile deleted successfully!", "success")
    return redirect(url_for('technicians.dashboard'))
 
-
-@technicians_bp.route('/activities')
-def technician_activities():
-   return render_template('technicians.activities.html')

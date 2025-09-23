@@ -94,3 +94,18 @@ class BusinessProfile(db.Model):
             except Exception:
                 return []
         return []
+    
+class TaskLog(db.Model):
+    __tablename__ = 'task_logs'
+    id = db.Column(db.String(200), primary_key=True)
+    action = db.Column(db.String(255), nullable=False)
+    booking_id = db.Column(db.String(200), db.ForeignKey('booking.id', ondelete='CASCADE'), nullable=False)
+    technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+    technician = db.relationship('Users', backref='task_logs')
+    booking = db.relationship('Booking', backref='task_logs')
+
+    def formatted_timestamp(self):
+        if self.timestamp:
+            return self.timestamp.strftime("%B %d, %Y %I:%M %p")
+        return None
