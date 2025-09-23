@@ -1,7 +1,7 @@
 import uuid
 from flask import redirect, render_template, request, url_for, flash
 from flask_login import login_required, current_user
-from App.models import Booking, BusinessProfile, db
+from App.models import Booking, BusinessProfile, db, TaskLog
 from . import technicians_bp
 import json
 
@@ -26,7 +26,8 @@ def dashboard():
       "bookings_in_progress": bookings_in_progress,
       "bookings_declined": bookings_declined,
       "bookings_completed": bookings_completed,
-      "business_profile": business_profile
+      "business_profile": business_profile,
+      "task_logs": TaskLog.query.filter_by(technician_id=current_user.id).order_by(TaskLog.timestamp.desc()).limit(5).all()
    }
    return render_template('technicians.dashboard.html', context=context)
 
@@ -59,6 +60,13 @@ def Complete_Booking():
    booking = Booking.query.filter_by(id=booking_id).first()
    if booking:
       booking.status = 'Completed'
+      task_log = TaskLog(
+         id=str(uuid.uuid4()),
+         action=booking.problem+' fixed',
+         booking_id=booking.id,
+         technician_id=current_user.id
+      )
+      db.session.add(task_log)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
 

@@ -144,18 +144,17 @@
     <div class="col-lg-6">
       <div class="list-box">
         <h5 class="mb-3"><i class="bi bi-tools"></i> Recent Repair Tasks</h5>
-        <div class="list-item">
-          <span><i class="bi bi-laptop me-2"></i> Laptop Screen Replacement</span>
-          <small>2 hrs ago</small>
-        </div>
-        <div class="list-item">
-          <span><i class="bi bi-phone me-2"></i> Phone Battery Replacement</span>
-          <small>5 hrs ago</small>
-        </div>
-        <div class="list-item">
-          <span><i class="bi bi-tablet me-2"></i> Tablet Touchscreen Fix</span>
-          <small>Yesterday</small>
-        </div>
+
+        {% if not context.task_logs %}
+          <p class="text-center">No recent tasks available.</p>
+        {% else %}
+          {% for task in context.task_logs %}
+          <div class="list-item">
+            <span><i class="bi bi-laptop me-2"></i> {{ task.action|capitalize() }}</span>
+            <small>{{ task.timestamp }}</small>
+          </div>
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
 
