@@ -146,12 +146,12 @@
         <h5 class="mb-3"><i class="bi bi-tools"></i> Recent Repair Tasks</h5>
 
         {% if not context.task_logs %}
-          <p class="text-center">No recent tasks available.</p>
+          <p class="text-center mt-5">No recent tasks available.</p>
         {% else %}
           {% for task in context.task_logs %}
           <div class="list-item">
             <span><i class="bi bi-laptop me-2"></i> {{ task.action|capitalize() }}</span>
-            <small>{{ task.timestamp }}</small>
+            <small>{{ moment(task.timestamp).fromNow() }}</small>
           </div>
           {% endfor %}
         {% endif %}
@@ -161,7 +161,7 @@
     <!-- Notifications -->
     <div class="col-lg-6">
       <div class="list-box">
-        <h5 class="mb-3"><i class="bi bi-bell"></i> Notifications</h5>
+        <h5 class="mb-3"><i class="bi bi-activity"></i> Recent Actions</h5>
         <div class="list-item">
           <span><i class="bi bi-bag-plus-fill text-success me-2"></i> New booking received</span>
           <small>Just now</small>

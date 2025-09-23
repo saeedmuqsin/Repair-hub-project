@@ -109,3 +109,10 @@ class TaskLog(db.Model):
         if self.timestamp:
             return self.timestamp.strftime("%B %d, %Y %I:%M %p")
         return None
+    
+class Actions(db.Model):
+    __tablename__ = 'actions'
+    id = db.Column(db.String(200), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    action = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())

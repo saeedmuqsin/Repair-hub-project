@@ -6,7 +6,7 @@ from .Users import users_bp
 from .Technicians import technicians_bp
 from .models import Users
 from .config import DevelopmentConfig
-from .extensions import migrate, login_manager, db, mail
+from .extensions import migrate, login_manager, db, mail, moment
 
 def create_app():
     app = Flask(__name__)
@@ -18,6 +18,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
+    moment.init_app(app)
     mail.init_app(app)
     login_manager.login_view = 'login'
 
