@@ -247,7 +247,7 @@
         {% else %}
         <div class="history-title">Booking History</div>
         <div class="booking-list">
-            {% for booking in bookings %}
+            {% for booking in bookings[::-1] %}
             <div class="booking-block">
                 <div class="booking-img-wrap">
                     <img src="data:image/png;base64,{{ booking.Display_deviceImage() }}" class="booking-img"

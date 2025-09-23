@@ -17,13 +17,30 @@ body {
   transition: width 0.3s ease;
   z-index: 1000;
 }
+
+
 #sidebar.collapsed {
   width: 70px;
 }
+
+.sidebar-header {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sidebar-header img {
+  height: 35px;
+  background-color: #f8f9fa;
+  width: 45px;
+  margin: 0 5px;
+  border-radius: 10px;
+}
+
 #sidebar h3 {
-  text-align: center;
-  font-size: 1.4rem;
-  margin-bottom: 30px;
+  font-size: 1.1rem;
+  margin: 7px auto 7px 7px;
   transition: opacity 0.3s;
 }
 #sidebar.collapsed h3 {

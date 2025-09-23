@@ -44,6 +44,7 @@ img.logo {
 }
 .input_group {
   position: relative;
+  display: block;
 }
 
 .input_group i{
@@ -78,6 +79,7 @@ img.logo {
 }
 
 @media screen and (max-width: 480px) {
+
     img.logo {
         width: 70px;
         height: 70px;
@@ -85,10 +87,12 @@ img.logo {
     }
   .login_container,
   .register_container{
+    display: block;
     width: 90%;
-    height: 420px;
-    margin: 70px auto 20px auto;
+    height: 580px;
+    margin: 50px auto 0px auto;
     padding: 25px;
+    font-size: 0.7rem;
   }
 
   .alert {
