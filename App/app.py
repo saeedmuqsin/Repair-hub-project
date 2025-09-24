@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, current_user
 from flask_mail import Message
 from .Users import users_bp
 from .Technicians import technicians_bp
+from .Admin import admin_bp
 from .models import Users
 from .config import DevelopmentConfig
 from .extensions import migrate, login_manager, db, mail, moment
@@ -28,6 +29,7 @@ def create_app():
     
     # registering all the flask blueprints.
     app.register_blueprint(users_bp)
+    app.register_blueprint(admin_bp)
     app.register_blueprint(technicians_bp)
 
 
