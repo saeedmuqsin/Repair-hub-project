@@ -18,7 +18,7 @@
   .table td {
     font-size: 14px;
   }
-  .accept-btn {
+  .accept-btn, .declined-btn {
     border-radius: 10px;
     font-size: 0.85rem;
   }
@@ -76,16 +76,87 @@
               </td>
               <td class="text-left">
                 {% if booking.status == 'Pending' %}
-                <button class="btn btn-sm btn-dark accept-btn" data-bs-toggle="modal" data-bs-target="#acceptModal-{{ booking.id }}">
-                  Accept
-                </button>
+                  <button class="btn btn-sm btn-dark accept-btn" data-bs-toggle="modal" data-bs-target="#acceptModal-{{ booking.id }}">
+                    Accept
+                  </button>
+                  <button class="btn btn-sm btn-danger declined-btn" data-bs-toggle="modal" data-bs-target="#declineModal-{{ booking.id }}">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
                 {% elif booking.status == 'In Progress' %}
                 <button class="btn btn-sm btn-primary accept-btn" data-bs-toggle="modal" data-bs-target="#progressModal-{{ booking.id }}">
+                  View Details
+                </button>
+                {% else %}
+                <button class="btn-sm btn btn-success text-sm" data-bs-toggle="modal" data-bs-target="#detailsModal-{{ booking.id }}">
                   View Details
                 </button>
                 {% endif %}
               </td>
             </tr>
+
+            <!-- Completed or Declined Booking Details Modal -->
+            <div class="modal fade" id="detailsModal-{{ booking.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="bi bi-info-circle text-info"></i> Booking Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <ul class="list-unstyled">
+                      <li><strong>Booking ID:</strong> <span>{{ booking.id }}</span></li>
+                      <li><strong>Customer Name:</strong> <span>{{ booking.user.username }}</span></li>
+                      <li><strong>Phone Number:</strong> <span>{{ booking.user.phone_number }}</span></li>
+                      <li><strong>Device:</strong> <span>{{ booking.device_type }}</span></li>
+                      <li><strong>Issue:</strong> <span>{{ booking.problem }}</span></li>
+                      <li><strong>Description:</strong> <span>{{ booking.problem_description }}</span></li>
+                      <li><strong>Location:</strong> <span>{{ booking.location }}</span></li>
+                      <li><strong>Status:</strong> 
+                        <span class="
+                          {% if booking.status == 'Completed' %}status-accepted
+                          {% elif booking.status == 'Declined' %}status-declined{% endif %}
+                        ">
+                          {{ booking.status }}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- declined modal  -->
+            <div class="modal fade" id="declineModal-{{ booking.id }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">
+                      <i class="bi bi-x-circle text-danger"></i> Confirm Booking Decline
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to decline this booking?</p>
+                    <ul class="list-unstyled">
+                      <li><strong>Booking ID:</strong> <span>{{ booking.id }}</span></li>
+                      <li><strong>Device:</strong> <span>{{ booking.device_type }}</span></li>
+                      <li><strong>Issue:</strong> <span>{{ booking.problem }}</span></li>
+                      <li><strong>Description:</strong> <span>{{ booking.problem_description }}</span></li>
+                      <li><strong>Location:</strong> <span>{{ booking.location }}</span></li>
+                    </ul>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+                    <a href="/technician/decline-booking?id={{ booking.id }}" class="btn btn-danger">Decline Booking</a>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <!-- Accept Modal -->
             {% if booking.status == 'Pending' %}

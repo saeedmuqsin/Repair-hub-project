@@ -1,7 +1,7 @@
 import uuid
 from flask import redirect, render_template, request, url_for, flash
 from flask_login import login_required, current_user
-from App.models import Booking, BusinessProfile, db, TaskLog
+from App.models import Booking, BusinessProfile, db, TaskLog, Actions
 from . import technicians_bp
 import json
 
@@ -27,7 +27,8 @@ def dashboard():
       "bookings_declined": bookings_declined,
       "bookings_completed": bookings_completed,
       "business_profile": business_profile,
-      "task_logs": TaskLog.query.filter_by(technician_id=current_user.id).order_by(TaskLog.timestamp.desc()).limit(5).all()
+      "task_logs": TaskLog.query.filter_by(technician_id=current_user.id).order_by(TaskLog.timestamp.desc()).limit(10).all(),
+      "actions": Actions.query.filter_by(user_id=current_user.id).order_by(Actions.timestamp.desc()).limit(10).all(),
    }
    return render_template('technicians.dashboard.html', context=context)
 
@@ -50,6 +51,11 @@ def booking_acceptance():
    booking = Booking.query.get(booking_id)
    if booking: 
       booking.status = 'In Progress'
+      new_action = Actions(
+         id=str(uuid.uuid4()),
+         action='Booking accepted',
+         user_id=current_user.id)
+      db.session.add(new_action)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
 
@@ -66,6 +72,13 @@ def Complete_Booking():
          booking_id=booking.id,
          technician_id=current_user.id
       )
+
+      new_action = Actions(
+         id=str(uuid.uuid4()),
+         action='Booking completed',
+         user_id=current_user.id)
+      
+      db.session.add(new_action)
       db.session.add(task_log)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
@@ -139,3 +152,19 @@ def Delete_BusinessProfile():
    flash("Business profile deleted successfully!", "success")
    return redirect(url_for('technicians.dashboard'))
 
+
+@technicians_bp.route('/decline-booking')
+@login_required
+def Decline_Booking():
+   booking_id = request.args.get('id')
+   # Logic to decline the booking goes here
+   booking = Booking.query.filter_by(id=booking_id).first()
+   if booking:
+      booking.status = 'Declined'
+      new_action = Actions(
+         id=str(uuid.uuid4()),
+         action='Booking declined',
+         user_id=current_user.id)
+      db.session.add(new_action)
+      db.session.commit()
+   return redirect(url_for('technicians.bookings'))

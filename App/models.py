@@ -113,6 +113,7 @@ class TaskLog(db.Model):
 class Actions(db.Model):
     __tablename__ = 'actions'
     id = db.Column(db.String(200), primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     action = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+    user = db.relationship('Users', backref='actions')
