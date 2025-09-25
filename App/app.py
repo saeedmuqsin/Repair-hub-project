@@ -50,16 +50,21 @@ def create_app():
             existingUser = Users.query.filter_by(email=email).first()
 
             # Customers view 
-            if existingUser and existingUser.check_password(password) == True and existingUser.role == "customer":
+            if existingUser and existingUser.check_password(password) == True and existingUser.role == "customer" and existingUser.is_active == True:
                 # Login successful
                 login_user(existingUser)
                 return redirect(f"/users/")
             
+            
             #  Technical_View
-            elif existingUser and existingUser.check_password(password) == True and existingUser.role == "technician":
+            elif existingUser and existingUser.check_password(password) == True and existingUser.role == "technician" and existingUser.is_active == True:
                 login_user(existingUser)
                 return redirect(f"/technician/dashboard")
             
+            # Unactive Account View
+            elif existingUser and existingUser.check_password(password) == True and existingUser.is_active == False:
+                flash("Account is not active. Please contact admin.")
+                return redirect(url_for('login'))
             
             else:
                 flash("Invalid email or password.")

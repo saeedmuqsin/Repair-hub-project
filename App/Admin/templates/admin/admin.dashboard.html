@@ -24,8 +24,9 @@
             font-size: 1.2rem;
             padding: 3px 7px;
             border-radius: 10px;
-            background-color: rgba(233, 230, 230, 0.479);
+            background-color: blue;
             margin: 0px 7px;
+            color: white;
         }
 
         .profile p {
@@ -76,6 +77,36 @@
         width: 100%;
         border-radius: 10px;
         background-color: #ffffff;
+        height: 350px;
+    }
+    
+    .profile-board {
+        overflow-y: scroll;
+
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            input {
+                width: 300px;
+                padding: 5px;
+                margin-top: -10px;
+                font-size: 13px;
+            }
+        }
+
+        .profiles {
+            display: block;
+            width: 100%;
+
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+        }
     }
 </style>
 {% endblock %}
@@ -97,7 +128,7 @@
         <div class="card-stat">
             <div class="body">
                 <h5 class="mx-3">Total Users</h5>
-                <p class="mx-3">0</p>
+                <p class="mx-3">{{ context.total_users }}</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="white"
                 viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
@@ -110,7 +141,7 @@
         <div class="card-stat">
             <div class="body">
                 <h5 class="mx-3">Total Bookings</h5>
-                <p class="mx-3">0</p>
+                <p class="mx-3">{{ context.total_booking }}</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="white"
                 viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
@@ -123,7 +154,7 @@
         <div class="card-stat">
             <div class="body">
                 <h5 class="mx-3">Approved Profiles</h5>
-                <p class="mx-3">0</p>
+                <p class="mx-3">{{ context.total_profiles }}</p>
             </div>
             <svg xmlns="http://www.w3.org/2000/svg" fill="white"
                 viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
@@ -138,14 +169,38 @@
     <div class="col-lg-6">
         <div class="stats-board">
             <h5 class="mb-3"><span><i class="bi bi-activity"></i> </span>Daily Overview</h5>
-            <canvas id="barChart"></canvas>
+            <canvas id="barChart" class="mt-4"></canvas>
         </div>
 
     </div>
 
     <div class="col-lg-6">
         <div class="profile-board">
-             <h5 class="mb-3"><span><i class="bi bi-tools"></i> </span>Top Profiles</h5>
+            <div class="top-header">
+                <h5 class="mb-3"></span>Top Profiles</h5>
+                <input type="text" class="form-control" placeholder="search for profiles" >
+            </div>
+
+            <div class="mt-2 p-2">
+
+                {% if context.all_profiles == [] %}
+                <p class="mt-5 text-center">No profiles found.</p>
+                {% else %}
+                <!-- profile -->
+                 {% for profile in context.all_profiles %}
+                    <div class="profile p-3">
+                        <div class="body d-flex align-items-center">
+                            <img src="data:image/png;base64, {{ profile.Display_photo() }}" alt="profile-img" width="50px" height="50px" style="border-radius: 360%;">
+                            <div class="d-block mx-2 mt-2">
+                                <h5 style="font-size: 0.95rem;">{{ profile.name }}</h5>
+                                <p style="margin-top: -5px; font-size: 0.75rem; font-weight: 500;">bookings: {{ profile.Total_Booking(profile.id) }}</ps>
+                            </div>
+                        </div>
+                        <button class="btn-sm btn btn-primary">view details</button>
+                    </div>
+                 {% endfor %}
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -157,13 +212,22 @@
 {% block script %}
 <script>
     const ctx = document.getElementById('barChart').getContext('2d');
+    const stats = JSON.parse('{{ stats|tojson|safe }}');
+
+    const data = [
+        stats.users,
+        stats.bookings,
+        stats.profiles
+    ]
+
     const barChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Users', 'Bookings', 'Profiles'],
             datasets: [{
                 label: 'Daily Data',
-                data: [3,20, 0],
+                data: data,
+
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',

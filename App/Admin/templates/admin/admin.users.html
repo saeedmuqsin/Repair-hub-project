@@ -1,0 +1,242 @@
+{% extends 'admin.base.html' %}
+
+{% block head %}
+<style>
+    .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0px;
+
+        input {
+            width: 700px;
+            font-size: 14px;
+            margin-top: 7px;
+            margin-right: 60px;
+        }
+
+        .btn {
+            margin-top: 5px;
+        }
+
+    }
+
+    .profile {
+        .name {
+            font-weight: 600;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .email {
+            font-size: 14px;
+            color: gray;
+            margin: 0;
+        }
+
+    }
+
+    .active {
+        font-weight: 500;
+        color: green;
+    }
+
+    .inactive {
+        font-weight: 500;
+        color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="top-header">
+    <h4 class="mx-3 mt-2">Active Users </h4>
+    <input type="text" class="form-control" placeholder="Search Users...">
+</div>
+
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th scope="col" style="margin-left: 10px;">Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">Date Created</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if context.active_users == [] %}
+        <tr>
+            <td colspan="5" class="text-center py-5">No active users found.</td>
+        </tr>
+        {% else %}
+        {% for profile in context.active_users %}
+
+        <tr>
+            <td class="profile pt-3">
+                <div class="d-flex align-items-center">
+                    <img src="data:image/png;base64, {{ profile.Display_UserProfilePhoto() }}" alt="Profile Picture"
+                        class="rounded-circle me-3" style="margin-left: 10px;" width="40" height="40">
+                    <div class="d-block mx-1">
+                        <p class="name">{{ profile.username }}</p>
+                        <p class="email">{{ profile.email }}</p>
+                    </div>
+                </div>
+            </td>
+
+            <td class="pt-4">
+                {% if profile.role == 'technician' %}
+                <div class="badge badge-sm bg-primary">{{ profile.role }}</div>
+
+                {% else %}
+                <div class="badge badge-sm bg-success">{{ profile.role }}</div>
+                {% endif %}
+            </td>
+            <td class="pt-4" style="font-size: 14px;"> {{ profile.formatted_created_at() }}</td>
+            <td class="pt-4 px-2">
+                {% if profile.is_active == True %}
+                <p class="align-items-center badge bg-success" style="font-size: 12px; font-weight: 500;">active</p>
+                {% else %}
+                <p class="align-items-center badge bg-danger" style="font-size: 12px; font-weight: 500;">inactive</p>
+                {% endif %}
+            </td>
+
+            <td class="pt-4">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#profileDetailsModal{{ profile.id }}">view details</a>
+                    <div class="modal fade" id="profileDetailsModal{{ profile.id }}" tabindex="-1"
+                        aria-labelledby="profileDetailsLabel{{ profile.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="profileDetailsLabel{{ profile.id }}">Profile Details
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="text-center">
+                                        <img src="data:image/png;base64,{{ profile.Display_UserProfilePhoto() }}"
+                                            alt="{{ profile.name }}" class="rounded-circle mb-3"
+                                            style="width: 120px; height: 120px; object-fit: cover;">
+                                        <h4>{{ profile.name }}</h4>
+                                        <p class="text-muted"><i class="fa-solid fa-location-dot text-danger"></i> {{
+                                            profile.location }}</p>
+                                    </div>
+                                    <hr>
+                                    <p><strong>Profile ID: </strong> <span class="text-primary">{{ profile.id }}</span>
+                                    </p>
+                                    <p><strong>Name:</strong> {{ profile.username }}</p>
+                                    <p><strong>Email: </strong>{{ profile.email }}</p>
+                                    <p><strong>Gender: </strong> {{ profile.gender|capitalize() }}</p>
+                                    <p><strong>Account Created: </strong>{{ profile.formatted_created_at() }}</p>
+                                    <p><strong>Account Role: </strong>
+                                        {% if profile.role == 'technician'%}
+                                        <span class="badge badge-sm bg-primary mx-2">{{ profile.role }}</span>
+                                        {% else %}
+                                        <span class="badge badge-sm bg-success mx-2">{{ profile.role }}</span>
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>Account ID Photo: </strong><br><span>
+                                            <img src="data:image/png;base64,{{ profile.Display_UserProfilePhoto() }}"
+                                                alt="{{ profile.name }}" class=" mb-3 mt-2"
+                                                style="width: 400px; height: 200px; object-fit: cover;">
+                                        </span></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+
+                                    <a href="/admin/approve_users?id={{ profile.id }}" type="button"
+                                        class="btn btn-primary">Approve</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- delete button  -->
+                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this user? This action cannot be undone.
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <a href="/admin/delete_user?id={{ profile.id }}" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+{% for message in get_flashed_messages() %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast d-block 
+      {% if message_category == 'success' %}bg-success text-white
+      {% elif message_category == 'error' %}bg-danger text-white
+      {% elif message_category == 'warning' %}bg-warning text-dark
+      {% elif message_category == 'info' %}bg-info text-dark
+      {% else %}bg-light text-dark{% endif %}" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header 
+        {% if message_category == 'success' %}bg-success text-white
+        {% elif message_category == 'error' %}bg-danger text-white
+        {% elif message_category == 'warning' %}bg-warning text-dark
+        {% elif message_category == 'info' %}bg-info text-dark
+        {% else %}bg-light text-dark{% endif %}">
+            <i class="bi 
+          {% if message_category == 'success' %}bi-check-circle-fill text-white
+          {% elif message_category == 'error' %}bi-x-circle-fill text-white
+          {% elif message_category == 'warning' %}bi-exclamation-triangle-fill text-dark
+          {% elif message_category == 'info' %}bi-info-circle-fill text-dark
+          {% else %}bi-info-circle text-dark{% endif %} me-2"></i>
+            <strong class="me-auto">
+                {% if message_category == 'success' %}Success
+                {% elif message_category == 'error' %}Error
+                {% elif message_category == 'warning' %}Warning
+                {% elif message_category == 'info' %}Info
+                {% else %}Notification{% endif %}
+            </strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ message }}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        toastElList.forEach(function (toastEl) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+</script>
+{% endblock %}

@@ -18,6 +18,7 @@ class Users(db.Model, UserMixin):
     role = db.Column(db.String(50), nullable=False)  # e.g., 'customer', 'technician'
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     photo = db.Column(MEDIUMBLOB, nullable=True)
+    is_active = db.Column(db.Boolean, default=False)
     booking = db.relationship('Booking', backref="user")
     business_profile = db.relationship(
         'BusinessProfile',
@@ -37,6 +38,12 @@ class Users(db.Model, UserMixin):
     def Display_UserProfilePhoto(self):
         encoded_img = base64.b64encode(self.photo).decode('utf-8')
         return encoded_img
+    
+    def formatted_created_at(self):
+        if self.created_at:
+            return self.created_at.strftime("%B %d, %Y %I:%M %p")
+        return None
+    
 
 class Booking(db.Model):
     __tablename__ = "booking"
@@ -59,6 +66,8 @@ class Booking(db.Model):
         if self.created_at:
             return self.created_at.strftime("%B %d, %Y %I:%M %p")
         return None
+    
+
 
 
 class BusinessProfile(db.Model):
@@ -94,6 +103,11 @@ class BusinessProfile(db.Model):
             except Exception:
                 return []
         return []
+    
+    def Total_Booking(self, id):
+        total_booking  = Booking.query.filter_by(service_profile = id).count()
+        return total_booking
+    
     
 class TaskLog(db.Model):
     __tablename__ = 'task_logs'
