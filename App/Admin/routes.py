@@ -36,7 +36,7 @@ def approve_users():
     if user:
         user.is_active = True
         db.session.commit()
-        flash("User Approved Successfully", "success")
+        flash(" User Approved Successfully", "success")
     return redirect('/admin/users/')
 
 @admin_bp.route('/delete_user')
@@ -48,3 +48,10 @@ def delete_user():
         db.session.commit()
         flash("User Deleted Successfully", "success")
     return redirect('/admin/users/')
+
+@admin_bp.route('/bookings/')
+def bookings():
+    context = {
+        'all_bookings': Booking.query.all(),
+    }
+    return render_template('admin.bookings.html', context=context)

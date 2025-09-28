@@ -36,6 +36,12 @@
 
     }
 
+    table {
+        th {
+            font-size: 13px;
+        }
+    }
+
     .active {
         font-weight: 500;
         color: green;
@@ -52,7 +58,8 @@
 
 <div class="top-header">
     <h4 class="mx-3 mt-2">Active Users </h4>
-    <input type="text" class="form-control" placeholder="Search Users...">
+    <input type="text" class="form-control" id="searchInput" placeholder="Search Users...">
+
 </div>
 
 <table class="table mt-4">
@@ -141,7 +148,7 @@
                                         {% endif %}
                                     </p>
                                     <p><strong>Account ID Photo: </strong><br><span>
-                                            <img src="data:image/png;base64,{{ profile.Display_UserProfilePhoto() }}"
+                                            <img src="data:image/png;base64,{{ profile.Display_ProfileID() }}"
                                                 alt="{{ profile.name }}" class=" mb-3 mt-2"
                                                 style="width: 400px; height: 200px; object-fit: cover;">
                                         </span></p>
@@ -236,6 +243,27 @@
         toastElList.forEach(function (toastEl) {
             var toast = new bootstrap.Toast(toastEl);
             toast.show();
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('table tbody tr');
+
+        searchInput.addEventListener('input', function () {
+            const searchValue = searchInput.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const nameCell = row.querySelector('.profile .name');
+                if (nameCell) {
+                    const nameText = nameCell.textContent.toLowerCase();
+                    if (nameText.includes(searchValue)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
         });
     });
 </script>

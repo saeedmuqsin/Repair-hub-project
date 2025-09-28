@@ -18,6 +18,7 @@ class Users(db.Model, UserMixin):
     role = db.Column(db.String(50), nullable=False)  # e.g., 'customer', 'technician'
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     photo = db.Column(MEDIUMBLOB, nullable=True)
+    profile_id = db.Column(MEDIUMBLOB, nullable=True)
     is_active = db.Column(db.Boolean, default=False)
     booking = db.relationship('Booking', backref="user")
     business_profile = db.relationship(
@@ -39,6 +40,10 @@ class Users(db.Model, UserMixin):
         encoded_img = base64.b64encode(self.photo).decode('utf-8')
         return encoded_img
     
+    def Display_ProfileID(self):
+        encoded_img = base64.b64encode(self.profile_id).decode('utf-8')
+        return encoded_img
+    
     def formatted_created_at(self):
         if self.created_at:
             return self.created_at.strftime("%B %d, %Y %I:%M %p")
@@ -54,8 +59,9 @@ class Booking(db.Model):
     status = db.Column(db.String(200), nullable=False, default='Pending')
     location = db.Column(db.String(100),nullable = False)
     device_photo = db.Column(MEDIUMBLOB, nullable = False)
-    user_id = db.Column(db.String(200), db.ForeignKey('users.id'), nullable=False,)
+    user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     service_profile = db.Column(db.String(200), db.ForeignKey('business_profiles.id', ondelete='CASCADE'))
+    completed_date = db.Column(db.String(200), default = 'Not yet')
 
     def Display_deviceImage(self):
         encoded_img = base64.b64encode(self.device_photo).decode('utf-8')
@@ -66,9 +72,6 @@ class Booking(db.Model):
         if self.created_at:
             return self.created_at.strftime("%B %d, %Y %I:%M %p")
         return None
-    
-
-
 
 class BusinessProfile(db.Model):
     __tablename__ = 'business_profiles'

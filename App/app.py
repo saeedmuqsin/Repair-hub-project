@@ -85,6 +85,7 @@ def create_app():
             role = request.form.get("role")
             gender = request.form.get("gender")
             profile_photo = request.files.get('profile-picture')
+            profile_id = request.files.get('profile-id')
 
 
             existing_user = Users.query.filter((Users.email == email) | (Users.phone_number == phone_number)).first()
@@ -115,6 +116,7 @@ def create_app():
                 new_user.username = username
                 new_user.gender = gender
                 new_user.photo = profile_photo.read() if profile_photo else None
+                new_user.profile_id = profile_id.read() if profile_id else None
                 new_user.role = role
 
                 db.session.add(new_user)

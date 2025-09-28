@@ -1,0 +1,170 @@
+{% extends 'admin.base.html' %}
+
+{% block head %}
+
+<style>
+    .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0px;
+
+        input {
+            width: 700px;
+            font-size: 14px;
+            margin-top: 7px;
+            margin-right: 60px;
+        }
+
+        .btn {
+            margin-top: 5px;
+        }
+
+    }
+
+    table {
+
+        th,
+        td {
+            font-size: 13px;
+        }
+    }
+
+    .blinking {
+        animation: blinkingText 1.5s infinite;
+        font-weight: bold;
+    }
+
+    @keyframes blinkingText {
+        0% {
+            opacity: 2;
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        75% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 2;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top-header">
+    <h4 class="mx-3 mt-2">Bookings <span>| {{ context.all_bookings | count() }}</span></h4>
+    <input type="text" class="form-control" id="searchBooking" placeholder="Search Bookings..."
+        onkeyup="filterBookings()">
+</div>
+
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th scope="col" style="margin-left: 20px;">ID </th>
+            <th scope="col">Name</th>
+            <th scope="col">Service Provider</th>
+            <th scope="col">Booking Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in context.all_bookings %}
+        <tr>
+            <td>{{ booking.id[:16] }}...</td>
+            <td>{{ booking.user.username }}</td>
+            <td>{{ booking.business_profile.name }}</td>
+            <td>{{ booking.formatted_created_at() }}</td>
+            <td>
+                {% if booking.status == 'Pending' %}
+                <p class="font-weight-bold text-warning">{{ booking.status }}</p>
+
+                {% elif booking.status == 'In Progress' %}
+                <p class="blinking text-primary">{{ booking.status }}</p>
+
+                {% elif booking.status == 'Completed' %}
+                <p class="font-weight-bold text-success">{{ booking.status }}</p>
+
+                {% elif booking.status == 'Declined' %}
+                <p class="font-weight-bold text-danger">{{ booking.status }}</p>
+                {% endif %}
+            <td>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#bookingModal{{ booking.id }}">View</button>
+
+                <!-- Modal -->
+                <div class="modal fade" style="font-size: 15px;" id="bookingModal{{ booking.id }}" tabindex="-1"
+                    aria-labelledby="bookingModalLabel{{ booking.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bookingModalLabel{{ booking.id }}">Booking Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>ID :</strong> {{ booking.id }}</p>
+                                <p><strong>Name:</strong> {{ booking.user.username }}</p>
+                                <p><strong>Phone number:</strong> {{ booking.user.phone_number }}</p>
+                                <p><strong>Service Provider:</strong> {{ booking.business_profile.name }}</p>
+                                <p><strong>Date:</strong> {{ booking.formatted_created_at() }}</p>
+                                <p><strong>Status:</strong>
+                                    {% if booking.status == "Pending" %}
+                                    <span class="text-warning">{{ booking.status }}</span>
+                                    {% elif booking.status == "In Progress" %}
+                                    <span class="text-primary blinking"> {{ booking.status }}</span>
+                                    {% elif booking.status== "Completed" %}
+                                    <span class="text-success"> {{ booking.status }}</span>
+                                    {% else %}
+                                    <span class="text-danger"> {{ booking.status }}</span>
+                                    {% endif %}
+                                </p>
+                                <p><strong>Device Problem:</strong> {{ booking.problem | capitalize() }} <br>
+                                    <span>Description: </span>{{ booking.problem_description }}
+                                </p>
+                                <p><strong>Device Picture: </strong><br>
+                                    <img src="data:image/png;base64,{{ booking.Display_deviceImage() }}"
+                                        alt="{{ booking.id }}" class=" mb-3 mt-2"
+                                        style="width: 400px; height: 400px; object-fit: cover;">
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block script %}
+<script>
+    function filterBookings() {
+        const input = document.getElementById('searchBooking');
+        const filter = input.value.toLowerCase();
+        const table = document.querySelector('table tbody');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const bookingIdCell = rows[i].getElementsByTagName('td')[0];
+            if (bookingIdCell) {
+                const bookingId = bookingIdCell.textContent || bookingIdCell.innerText;
+                if (bookingId.toLowerCase().indexOf(filter) > -1) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}
