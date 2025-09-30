@@ -154,7 +154,8 @@
     <h3 class="text-center mt-5">No Technicians available.</h3>
     {% else %}
     <div class="d-flex align-items-center justify-content-between">
-      <input type="text" class="form-control mx-4" placeholder="Search for a technician..." id="searchInput" />
+      <input type="text" class="form-control mx-4" placeholder="Search for a technician..." id="searchInput"
+        onkeyup="searchTechnicians()" />
     </div>
 
     <div class="technicians" id="technicians">
@@ -184,7 +185,8 @@
                 <i class="fa-solid fa-ellipsis-vertical text-light"></i>
               </button>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileDetailsModal{{ profile.id }}">View Profile</a></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                    data-bs-target="#profileDetailsModal{{ profile.id }}">View Profile</a></li>
                 <li>
                   <hr class="dropdown-divider">
                 </li>
@@ -197,7 +199,8 @@
 
 
       <!-- Profile Details Modal -->
-      <div class="modal fade" id="profileDetailsModal{{ profile.id }}" tabindex="-1" aria-labelledby="profileDetailsLabel{{ profile.id }}" aria-hidden="true">
+      <div class="modal fade" id="profileDetailsModal{{ profile.id }}" tabindex="-1"
+        aria-labelledby="profileDetailsLabel{{ profile.id }}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
@@ -206,20 +209,23 @@
             </div>
             <div class="modal-body">
               <div class="text-center">
-                <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}"
+                  class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
                 <h4>{{ profile.name }}</h4>
                 <p class="text-muted"><i class="fa-solid fa-location-dot text-danger"></i> {{ profile.location }}</p>
               </div>
               <hr>
               <p><strong>Profile ID:</strong> <span class="text-primary">{{ profile.id }}</span></p>
-              <p><strong>Specialization:</strong> 
+              <p><strong>Specialization:</strong>
                 {% for service in profile.get_services_list() %}
                 {{ service }},
                 {% endfor %}
               </p>
               <p><strong>Technician:</strong> </p>
               <div class="d-flex">
-                <img src="data:image/png;base64,{{ profile.technician.Display_UserProfilePhoto()  }}" alt="{{ profile.name }}" class="rounded-circle mb-3" style="width: 50px; height: 50px; object-fit: cover;">
+                <img src="data:image/png;base64,{{ profile.technician.Display_UserProfilePhoto()  }}"
+                  alt="{{ profile.name }}" class="rounded-circle mb-3"
+                  style="width: 50px; height: 50px; object-fit: cover;">
                 <div class="d-block mx-3">
                   <p class="mb-0">{{ profile.technician.username }}</p>
                   <p class="text-muted small mb-0">{{ profile.technician.email }}</p>
@@ -227,7 +233,7 @@
               </div>
               <p><strong>Contact:</strong> {{ profile.technician.phone_number }}</p>
               <p><strong>About:</strong> {{ profile.description }}</p>
-              <p><strong>Profile Status: </strong> 
+              <p><strong>Profile Status: </strong>
                 {% if profile.is_approved %}
                 <span class="badge text-light bg-success">Approved</span>
                 {% else %}
@@ -331,8 +337,8 @@
 </section>
 {% endblock %}
 
-{% block script %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var toastElList = [].slice.call(document.querySelectorAll('.toast'));
@@ -342,27 +348,20 @@
     });
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchInput');
-    console.log(searchInput.value);
-    if (searchInput) {
-      searchInput.addEventListener('input', function () {
-        const searchValue = this.value.toLowerCase();
-        const technicians = document.querySelectorAll('#technician .card');
 
-        technicians.forEach(function (technician) {
-          const name = technician.querySelector('.card-title').textContent.toLowerCase();
-          const location = technician.querySelector('.text-muted').textContent.toLowerCase();
+  function searchTechnicians() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const technicians = document.querySelectorAll('.card');
 
-          if (name.includes(searchValue) || location.includes(searchValue)) {
-            technician.style.display = 'block';
-          } else {
-            technician.style.display = 'none';
-          }
-        });
-      });
-    }
-  });
+    technicians.forEach(technician => {
+      const name = technician.querySelector('.card-title').textContent.toLowerCase();
+      if (name.includes(input)) {
+        technician.style.display = 'block';
+      } else {
+        technician.style.display = 'none';
+      }
+    });
+  }
 
 </script>
 {% endblock %}

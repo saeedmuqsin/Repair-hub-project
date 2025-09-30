@@ -57,9 +57,8 @@
 {% block content %}
 
 <div class="top-header">
-    <h4 class="mx-3 mt-2">Active Users </h4>
+    <h4 class="mx-3 mt-2">Active Users <span>| {{ context.active_users | count() }}</span></h4>
     <input type="text" class="form-control" id="searchInput" placeholder="Search Users...">
-
 </div>
 
 <table class="table mt-4">
@@ -95,10 +94,10 @@
 
             <td class="pt-4">
                 {% if profile.role == 'technician' %}
-                <div class="badge badge-sm bg-primary">{{ profile.role }}</div>
+                <div class="badge badge-sm bg-primary">{{ profile.role | capitalize() }}</div>
 
                 {% else %}
-                <div class="badge badge-sm bg-success">{{ profile.role }}</div>
+                <div class="badge badge-sm bg-success">{{ profile.role | capitalize() }}</div>
                 {% endif %}
             </td>
             <td class="pt-4" style="font-size: 14px;"> {{ profile.formatted_created_at() }}</td>

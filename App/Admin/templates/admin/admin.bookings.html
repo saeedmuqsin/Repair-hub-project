@@ -74,6 +74,14 @@
         </tr>
     </thead>
     <tbody>
+        {% if context.all_bookings == [] %}
+        <tr>
+            <td colspan="6">
+                <p class="text-center my-5">No Active Bookings</p>
+            </td>
+        </tr>
+
+        {% else %}
         {% for booking in context.all_bookings %}
         <tr>
             <td>{{ booking.id[:16] }}...</td>
@@ -127,6 +135,7 @@
                                 <p><strong>Device Problem:</strong> {{ booking.problem | capitalize() }} <br>
                                     <span>Description: </span>{{ booking.problem_description }}
                                 </p>
+                                <p><strong>Date Completed: </strong> {{ booking.completed_date }}</p>
                                 <p><strong>Device Picture: </strong><br>
                                     <img src="data:image/png;base64,{{ booking.Display_deviceImage() }}"
                                         alt="{{ booking.id }}" class=" mb-3 mt-2"
@@ -142,6 +151,7 @@
             </td>
         </tr>
         {% endfor %}
+        {% endif %}
     </tbody>
 </table>
 {% endblock %}

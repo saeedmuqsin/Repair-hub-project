@@ -414,7 +414,7 @@
                                 {% if booking.status != "Completed" %}
                                     <p class="mb-0">Pickup is scheduled once the repair is completed. You will be notified with the details.</p>
                                 {% else %}
-                                    <p class="mb-0">Pickup scheduled for: <strong>26 July 2025</strong> at {{ booking.location }} Service
+                                    <p class="mb-0">Pickup scheduled for: <strong>{{ booking.completed_date }}</strong> at {{ booking.location }} Service
                                     Center.</p>
                                 {% endif %}
                             </div>

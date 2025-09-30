@@ -87,11 +87,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            input {
-                width: 300px;
-                padding: 5px;
-                margin-top: -10px;
-                font-size: 13px;
+            .input-group {
+                max-width: 300px;
+                width: 100%;
+                input {
+                    font-size: 13px;
+                }
             }
         }
 
@@ -177,8 +178,10 @@
     <div class="col-lg-6">
         <div class="profile-board">
             <div class="top-header">
-                <h5 class="mb-3"></span>Top Profiles</h5>
-                <input type="text" class="form-control" placeholder="search for profiles" >
+                <h5 class="mt-2"><i class="bi bi-person-lines-fill px-2"></i> Recent Profiles</h5>
+                <div class="input-group" style="max-width: 250px;">
+                    <input type="search" id="profile-search" class="form-control" placeholder="Search for profiles" aria-label="Search for profiles" autocomplete="off">
+                </div>
             </div>
 
             <div class="mt-2 p-2">
@@ -196,15 +199,42 @@
                                 <p style="margin-top: -5px; font-size: 0.75rem; font-weight: 500;">bookings: {{ profile.Total_Booking(profile.id) }}</ps>
                             </div>
                         </div>
-                        <button class="btn-sm btn btn-primary">view details</button>
+                        <button class="btn-sm btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileModal{{ profile.id }}">view details</button>
                     </div>
                  {% endfor %}
                 {% endif %}
             </div>
         </div>
+    
+        <!-- Modals for profile details -->
+        {% for profile in context.all_profiles %}
+        <div class="modal fade" id="profileModal{{ profile.id }}" tabindex="-1" aria-labelledby="profileModalLabel{{ profile.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileModalLabel{{ profile.id }}">Profile Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}" class="rounded-circle" width="80" height="80">
+                            <h5>{{ profile.name }}</h5>
+                        </div>
+                        <p><strong>ID:</strong> {{ profile.id }}</p>
+                        <p><strong>Creator:</strong> {{ profile.technician.username }}</p>
+                        <p><strong>Total Bookings:</strong> {{ profile.Total_Booking(profile.id) }}</p>
+                        <p><strong>Verification Status:</strong> {% if profile.is_approved %}<span class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning">Not Verified</span>{% endif %}</p>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    
     </div>
-
-
 </div>
 
 {% endblock %}
@@ -276,6 +306,40 @@
                 }
             }
         },
+    });
+
+    // Search functionality for profiles
+    const searchInput = document.getElementById('profile-search');
+    const profiles = document.querySelectorAll('.profile-board .profile');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = this.value.trim().toLowerCase();
+            let hasResults = false;
+            profiles.forEach(profile => {
+                const name = profile.querySelector('h5').textContent.toLowerCase();
+                if (name.includes(query)) {
+                    profile.style.display = '';
+                    hasResults = true;
+                } else {
+                    profile.style.display = 'none';
+                }
+            });
+            // Handle no results message
+            let noResultsMsg = document.querySelector('.profile-board .mt-2 .no-search-results');
+            if (!hasResults && query !== '') {
+                if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('p');
+                    noResultsMsg.className = 'mt-5 text-center no-search-results';
+                    noResultsMsg.textContent = 'No profiles match your search.';
+                    document.querySelector('.profile-board .mt-2').appendChild(noResultsMsg);
+                }
+            } else if (noResultsMsg) {
+                noResultsMsg.remove();
+            }
+        }, 300); // 300ms debounce
     });
 </script>
 {% endblock %}

@@ -1,0 +1,265 @@
+{% extends 'admin.base.html' %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .top-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0px;
+
+        input {
+            width: 700px;
+            font-size: 14px;
+            margin-top: 7px;
+            margin-right: 60px;
+        }
+
+        .btn {
+            margin-top: 5px;
+        }
+
+    }
+
+    .profile {
+        .name {
+            font-weight: 600;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .email {
+            font-size: 14px;
+            color: gray;
+            margin: 0;
+        }
+
+    }
+
+    table {
+
+        th,
+        td {
+            font-size: 13px;
+        }
+    }
+
+    .active {
+        font-weight: 500;
+        color: green;
+    }
+
+    .inactive {
+        font-weight: 500;
+        color: red;
+    }
+
+    .chart-container {
+        width: 400px;
+        display: block;
+        height: 400px;
+        margin: 10px auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="top-header">
+    <h4 class="mx-3 mt-2">Active Profiles <span>| {{ context.all_profiles | count() }}</span></h4>
+    <input type="text" class="form-control" id="searchInput" placeholder="Search Profiles ...">
+</div>
+
+<table class="table mt-4" id="profilesTable">
+    <thead>
+        <tr>
+            <th scope="col" style="margin-left: 10px;">ID</th>
+            <th scope="col">Service Provider</th>
+            <th scope="col">Creator</th>
+            <th scope="col">Total Bookings</th>
+            <th scope="col">Verification Status</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if context.all_profiles == [] %}
+        <tr>
+            <td colspan="6" class="text-center">
+                <p class="mt-5"> No Profiles Found</p>
+            </td>
+        </tr>
+
+        {% else %}
+        {% for profile in context.all_profiles %}
+        <tr>
+            <td class="pt-4">
+                <p>
+                    {{ profile.id[:15] }} ...
+                </p>
+            </td>
+
+            <td class="pt-2">
+                <div class="d-flex align-items-center">
+                    <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.id }}"
+                        class=" mb-3 mt-2 rounded-circle" width="40" height="40">
+                    <p style="font-weight: 600;" class="mx-2">{{ profile.name }}</p>
+                </div>
+            </td>
+
+            <td class="pt-4">
+                <p style="font-weight: 600;">{{ profile.technician.username }}</p>
+            </td>
+
+            <td class="pt-4">
+                <p style="font-weight: 600;" class="mx-5">{{ profile.Total_Booking(profile.id) }}</p>
+            </td>
+            <td class="pt-4">
+                {% if profile.is_approved %}
+                <div class="badge badge-sm bg-success">Verified</div>
+                {% else %}
+                <div class="badge badge-sm bg-warning">Not Verified</div>
+                {% endif %}
+            </td>
+
+            <td class="pt-4">
+                <!-- Link to view profile details -->
+                <a href="#" class="btn btn-sm btn-primary" title="View profile details"
+                    aria-label="View details for profile {{ profile.name|default('Unknown Profile') }}"
+                    data-profile-id="{{ profile.id }}" data-bs-toggle="modal"
+                    data-bs-target="#profileModal{{ profile.id }}">
+                    <i class="bi bi-eye"></i> View
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Modals for profile details -->
+{% for profile in context.all_profiles %}
+<div class="modal fade" id="profileModal{{ profile.id }}" tabindex="-1"
+    aria-labelledby="profileModalLabel{{ profile.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel{{ profile.id }}">Profile Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}"
+                        class="rounded-circle" width="80" height="80">
+                    <h5>{{ profile.name }}</h5>
+                </div>
+                <p><strong>ID:</strong> {{ profile.id }}</p>
+                <p><strong>Description:</strong> {{ profile.description | default('No description provided.') }}</p>
+                <p><strong>Creator:</strong> {{ profile.technician.username }}</p>
+                <p><strong>Total Bookings:</strong> {{ profile.Total_Booking(profile.id) }}</p>
+                <p><strong>Verification Status:</strong> {% if profile.is_approved %}<span
+                        class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning">Not
+                        Verified</span>{% endif %}</p>
+
+                <!-- Booking Statistics Chart -->
+                <p class="mt-2"><strong>Booking Statistics: </strong></p>
+                <div class="chart-container">
+                    <canvas id="bookingStatsChart{{ profile.id }}" width="100" height="100" class="mt-4"></canvas>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const ctx = document.getElementById('bookingStatsChart{{ profile.id }}').getContext('2d');
+                        const stats = JSON.parse('{{ profile.status_count(profile.id)|tojson|safe }}');
+                        const data = [
+                            stats['Pending'] || 0,
+                            stats['In Progress'] || 0,
+                            stats['Completed'] || 0,
+                            stats['Declined'] || 0
+                        ];
+                        new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Pending', 'In Progress', 'Completed', 'Declined'],
+                                datasets: [{
+                                    label: 'Booking Statistics',
+                                    data: data,
+                                    backgroundColor: [
+                                        'rgba(255, 205, 86, 0.7)', // Pending
+                                        'rgba(54, 162, 235, 0.7)', // In Progress
+                                        'rgba(75, 192, 192, 0.7)', // Completed
+                                        'rgba(255, 99, 132, 0.7)'  // Declined
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 205, 86, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 99, 132, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top'
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                return `${label}: ${value}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% if not profile.is_approved %}
+                <a href="/admin/approve_profile?id={{ profile.id }}" class="btn btn-primary">Approve</a>
+
+                {% else %}
+                <a href="/admin/revoke_profile?id={{ profile.id }}" class="btn btn-danger">Revoke Approval</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('profilesTable');
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const rows = tbody.getElementsByTagName('tr');
+
+        searchInput.addEventListener('input', function () {
+            const filter = this.value.toLowerCase();
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                if (cells.length > 1) {
+                    const name = cells[1].textContent.toLowerCase(); // Service Provider column
+                    if (name.includes(filter)) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+{% endblock %}

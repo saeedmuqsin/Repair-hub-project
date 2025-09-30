@@ -22,11 +22,13 @@ img.logo {
 .register_container {
     width: 540px;
     padding: 20px;
+    display: block;
     margin: 20px auto;
     background-color: #191923;
     color: #fff;
     border-radius: 10px;
 }
+
 
 .alert {
   width: 530px;
@@ -79,28 +81,34 @@ img.logo {
 }
 
 @media screen and (max-width: 480px) {
-
     img.logo {
-        width: 70px;
-        height: 70px;
-        margin: 40px auto 7px auto;
+        width: 50px;
+        height: 50px;
+        margin: 20px auto 7px auto;
     }
   .login_container,
   .register_container{
     display: block;
     width: 90%;
-    height: 580px;
     margin: 50px auto 0px auto;
-    padding: 25px;
+    /* padding: 25px; */
     font-size: 0.7rem;
   }
 
+  #header {
+    font-size: 20px;
+  }
+
+  .login_container {
+    height: 400px;
+  }
+ 
   .alert {
     width: 90%;
   }
 
   .register_container {
-    height: 90vh;
+    height: 120vh;
   }
 
   .input_group {
@@ -127,7 +135,7 @@ img.logo {
   }
 
    .register_container {
-    height: 70vh;
+    height: 100vh;
   }
 
   .alert {

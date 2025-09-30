@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from App.models import Booking, BusinessProfile, db, TaskLog, Actions
 from . import technicians_bp
 import json
-
+import time
 
 @technicians_bp.route('/dashboard')
 @login_required
@@ -66,6 +66,7 @@ def Complete_Booking():
    booking = Booking.query.filter_by(id=booking_id).first()
    if booking:
       booking.status = 'Completed'
+      booking.completed_date = time.strftime("%B %d, %Y %I:%M %p")
       task_log = TaskLog(
          id=str(uuid.uuid4()),
          action=booking.problem+' fixed',

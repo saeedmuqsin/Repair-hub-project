@@ -15,7 +15,7 @@ def home():
 @users_bp.route('/appointment_booking')
 @login_required
 def booking_appointment():
-    business_profiles = BusinessProfile.query.filter_by(is_approved=False).all()
+    business_profiles = BusinessProfile.query.filter_by(is_approved=True).all()
     # total_bookings = Booking.query.filter_by(service_profile=business_profiles.id).count()
     return render_template('select_technician.html', business_profiles=business_profiles)
 

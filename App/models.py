@@ -20,7 +20,7 @@ class Users(db.Model, UserMixin):
     photo = db.Column(MEDIUMBLOB, nullable=True)
     profile_id = db.Column(MEDIUMBLOB, nullable=True)
     is_active = db.Column(db.Boolean, default=False)
-    booking = db.relationship('Booking', backref="user")
+    booking = db.relationship('Booking', backref="user", cascade="all, delete-orphan")
     business_profile = db.relationship(
         'BusinessProfile',
         backref="technician",
@@ -110,6 +110,15 @@ class BusinessProfile(db.Model):
     def Total_Booking(self, id):
         total_booking  = Booking.query.filter_by(service_profile = id).count()
         return total_booking
+    
+    def status_count(self, id):
+        bookings_stats = {
+            'Pending': Booking.query.filter_by(service_profile=id, status='Pending').count(),
+            'In Progress': Booking.query.filter_by(service_profile=id, status='In Progress').count(),
+            'Completed': Booking.query.filter_by(service_profile=id, status='Completed').count(),
+            'Declined': Booking.query.filter_by(service_profile=id, status='Declined').count()
+        }
+        return bookings_stats
     
     
 class TaskLog(db.Model):
