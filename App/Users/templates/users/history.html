@@ -318,7 +318,12 @@
                                 <p class="mb-1"><strong>Device:</strong> {{ booking.device_type }}</p>
                                 <p class="mb-1"><strong>Problem:</strong> {{ booking.problem }}</p>
                                 <p class="mb-1"><strong>Date Booked:</strong> {{ booking.formatted_created_at() }}</p>
-                                <p class="mb-1"><strong>Service Provider:</strong> {{ booking.business_profile.name }}</p>
+                                <p class="mb-1"><strong>Service Provider:</strong>
+                                    {% if booking.service_profile and booking.service_profile != "Profile Deleted" %}
+                                        {{ booking.business_profile.name }}
+                                    {% else %}
+                                        <span class="text-danger">Profile Deleted</span>
+                                    {% endif %}
                             </div>
 
                             <!-- Progress Steps -->

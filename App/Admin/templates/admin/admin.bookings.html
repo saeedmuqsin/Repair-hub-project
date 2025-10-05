@@ -86,7 +86,13 @@
         <tr>
             <td>{{ booking.id[:16] }}...</td>
             <td>{{ booking.user.username }}</td>
-            <td>{{ booking.business_profile.name }}</td>
+            <td>
+                {% if booking.service_profile and booking.service_profile != "Profile Deleted" %}
+                    {{ booking.business_profile.name }}
+                {% else %}
+                <span class="text-danger">Profile Deleted</span>
+                {% endif %}
+            </td>
             <td>{{ booking.formatted_created_at() }}</td>
             <td>
                 {% if booking.status == 'Pending' %}

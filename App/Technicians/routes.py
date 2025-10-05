@@ -1,7 +1,7 @@
 import uuid
 from flask import redirect, render_template, request, url_for, flash
 from flask_login import login_required, current_user
-from App.models import Booking, BusinessProfile, db, TaskLog, Actions
+from App.models import Booking, BusinessProfile, db, TaskLog
 from . import technicians_bp
 import json
 import time
@@ -28,7 +28,12 @@ def dashboard():
       "bookings_completed": bookings_completed,
       "business_profile": business_profile,
       "task_logs": TaskLog.query.filter_by(technician_id=current_user.id).order_by(TaskLog.timestamp.desc()).limit(10).all(),
-      "actions": Actions.query.filter_by(user_id=current_user.id).order_by(Actions.timestamp.desc()).limit(10).all(),
+      "stats": {
+         "bookings_pending": bookings_pending,
+         "bookings_in_progress": bookings_in_progress,
+         "bookings_declined": bookings_declined,
+         "bookings_completed": bookings_completed
+      },
    }
    return render_template('technicians.dashboard.html', context=context)
 
@@ -51,11 +56,6 @@ def booking_acceptance():
    booking = Booking.query.get(booking_id)
    if booking: 
       booking.status = 'In Progress'
-      new_action = Actions(
-         id=str(uuid.uuid4()),
-         action='Booking accepted',
-         user_id=current_user.id)
-      db.session.add(new_action)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
 
@@ -70,16 +70,8 @@ def Complete_Booking():
       task_log = TaskLog(
          id=str(uuid.uuid4()),
          action=booking.problem+' fixed',
-         booking_id=booking.id,
          technician_id=current_user.id
       )
-
-      new_action = Actions(
-         id=str(uuid.uuid4()),
-         action='Booking completed',
-         user_id=current_user.id)
-      
-      db.session.add(new_action)
       db.session.add(task_log)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
@@ -148,6 +140,13 @@ def create_business_profile():
 def Delete_BusinessProfile():
    business_profile_id = request.args.get('id')
    delete_profile = BusinessProfile.query.filter_by(id=business_profile_id, technician_id=current_user.id).first()
+   if not delete_profile:
+      flash("Business profile not found or you don't have permission to delete it.", "danger")
+      return redirect(url_for('technicians.dashboard'))
+   
+      # Optionally, handle associated bookings if needed
+      # For now, we'll just delete the profile
+
    db.session.delete(delete_profile)
    db.session.commit()
    flash("Business profile deleted successfully!", "success")
@@ -162,10 +161,5 @@ def Decline_Booking():
    booking = Booking.query.filter_by(id=booking_id).first()
    if booking:
       booking.status = 'Declined'
-      new_action = Actions(
-         id=str(uuid.uuid4()),
-         action='Booking declined',
-         user_id=current_user.id)
-      db.session.add(new_action)
       db.session.commit()
    return redirect(url_for('technicians.bookings'))

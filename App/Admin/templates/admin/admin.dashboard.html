@@ -243,7 +243,6 @@
 <script>
     const ctx = document.getElementById('barChart').getContext('2d');
     const stats = JSON.parse('{{ stats|tojson|safe }}');
-
     const data = [
         stats.users,
         stats.bookings,

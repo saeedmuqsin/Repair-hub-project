@@ -1,5 +1,6 @@
 from datetime import timedelta
 import uuid
+import psycopg2
 
 class Config:
     SECRET_KEY = str(uuid.uuid4())
@@ -23,8 +24,9 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:0557468637saeed.@localhost:3306/repair_hub'
 
 class ProductionConfig(Config):
-    DEBUG = False
+    DEBUG = True
     environment = 'production'
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:hellosaeed123.@db.xvpjjdqdvrbiaicexhpj.supabase.co:5432/repair_hub"
 
 class TestingConfig(Config):
     TESTING = True

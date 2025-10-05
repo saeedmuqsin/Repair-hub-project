@@ -262,7 +262,7 @@
           <img src="data:image/png;base64,{{ profile.Display_photo() }}" class="card-img-top" alt="Business Image">
           <div class="card-body">
             <h5 class="card-title">{{ profile.name }}</h5>
-            <p class="card-text">{{ profile.description }}</p>
+            <p class="card-text">{{ profile.description[:80] }}...</p>
             <button class="btn bg-dark"  data-bs-toggle="modal" data-bs-target="#businessProfileModal{{ profile.id }}">View Details</button>
             <!-- Delete Business Profile Button (triggers modal) -->
             <button type="button" class="btn btn-success bg-danger" data-bs-toggle="modal" data-bs-target="#deleteBusinessModal{{ profile.id }}">
@@ -296,54 +296,47 @@
       <!-- Business Profile Details Modal Trigger -->
 
       <!-- Business Profile Details Modal -->
-      <div class="modal fade" id="businessProfileModal{{ profile.id }}" tabindex="-1" aria-labelledby="businessProfileModalLabel{{ profile.id }}" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-          <div class="modal-content" style="border-radius: 18px; box-shadow: 0 8px 32px rgba(58,134,255,0.18); border: none;">
-            <div class="modal-header" style="background: linear-gradient(90deg, #000 60%, #000 100%); border-bottom: none;">
-              <h4 class="modal-title fw-bold text-white" id="businessProfileModalLabel{{ profile.id }}">
-                <i class="bi bi-building me-2"></i>{{ profile.name }}
-              </h4>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+       <div class="modal fade" id="businessProfileModal{{ profile.id }}" tabindex="-1"
+    aria-labelledby="businessProfileModalLabel{{ profile.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="businessProfileModalLabel{{ profile.id }}">Profile Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body px-4 py-4" style="background: #f8fafc;">
-              <div class="row g-4 align-items-center">
-                <div class="col-md-5">
-                  <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="Business Image" class="img-fluid rounded-4 shadow" style="max-height: 320px; object-fit: cover; background: #e9ecef;">
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}"
+                        class="rounded-circle" width="80" height="80">
+                    <h5>{{ profile.name }}</h5>
                 </div>
-                <div class="col-md-7">
-                  <h3 class="fw-bold mb-2" style="color: #22223b;">{{ profile.name }}</h3>
-                  <span class="badge bg-dark mb-3" style="font-size: 0.7rem; padding: 8px 16px; border-radius: 8px;">
-                    <i class="bi bi-geo-alt-fill me-1"></i> {{ profile.location }}
-                  </span>
-                  <p class="mb-3" style="font-size: 1.1rem; color: #495057;">{{ profile.description }}</p>
-                  <div class="mb-3">
-                    <label class="fw-semibold" style="color: #22223b; font-size: 1.1rem;">Services Offered:</label>
-                    <ul class="list-unstyled mb-0 mx-1" style="color: #495057; font-size: 1rem;">
-                      {% for service in profile.get_services_list() %}
-                        <li style="font-size: .9rem;"><i class="bi bi-check-circle-fill text-dark"></i> {{ service }}</li>
-                      {% endfor %}
+                <p><strong>Name:</strong> {{ profile.name }}</p>
+                <p><strong>Description:</strong> {{ profile.description | default('No description provided.') }}</p>
+                <p><strong>Creator:</strong> {{ profile.technician.username }}</p>
+                <p><strong>Location:</strong> {{ profile.location }}</p>
+                <p><strong>Services Offered:</strong>
+                    {% if profile.get_services_list() %}
+                    <ul>
+                        {% for service in profile.get_services_list() %}
+                        <li>{{ service.strip() }}</li>
+                        {% endfor %}
                     </ul>
-                  </div>
-                  <div class="mt-4">
-                    <span class="fw-semibold"  style="color: #22223b; font-size: 1.1rem;">Contact:</span>
-                    <div class="mt-1" style="font-size: 0.9rem;">
-                      <i class="bi bi-envelope-fill me-2"></i>{{ profile.technician.email }}
-                      <br>
-                      <i class="bi bi-telephone-fill me-2"></i>{{ profile.technician.phone_number }}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    {% else %}
+                    <span>No services listed.</span>
+                    {% endif %}
+                <p><strong>Total Bookings:</strong> {{ profile.Total_Booking(profile.id) }}</p>
+                <p><strong>Verification Status:</strong> {% if profile.is_approved %}<span
+                        class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning">Not
+                        Verified</span>{% endif %}</p>
+
+
             </div>
-            <div class="modal-footer" style="background: #fff; border-top: none;">
-              <button type="button" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;" data-bs-dismiss="modal">Close</button>
-              <a href="/business/{{ profile.id }}/edit/" class="btn btn-primary px-4 py-2" style="border-radius: 10px; font-weight: 600;">
-                <i class="bi bi-pencil-square me-1"></i>Edit Profile
-              </a>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
+</div>
       {% endfor %}
     {% endif %}
     <!-- Duplicate above block for other business profiles -->

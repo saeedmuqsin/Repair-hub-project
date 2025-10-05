@@ -21,6 +21,7 @@ class Users(db.Model, UserMixin):
     profile_id = db.Column(MEDIUMBLOB, nullable=True)
     is_active = db.Column(db.Boolean, default=False)
     booking = db.relationship('Booking', backref="user", cascade="all, delete-orphan")
+    task_logs = db.relationship('TaskLog', backref='booking', cascade="all, delete-orphan")
     business_profile = db.relationship(
         'BusinessProfile',
         backref="technician",
@@ -60,7 +61,7 @@ class Booking(db.Model):
     location = db.Column(db.String(100),nullable = False)
     device_photo = db.Column(MEDIUMBLOB, nullable = False)
     user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    service_profile = db.Column(db.String(200), db.ForeignKey('business_profiles.id', ondelete='CASCADE'))
+    service_profile = db.Column(db.String(200), db.ForeignKey('business_profiles.id', ondelete='CASCADE'), default="Profile Deleted", nullable=False)
     completed_date = db.Column(db.String(200), default = 'Not yet')
 
     def Display_deviceImage(self):
@@ -84,7 +85,7 @@ class BusinessProfile(db.Model):
     technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     is_approved = db.Column(db.Boolean, default=False)
-    booking = db.relationship('Booking', backref='business_profile', lazy=True, cascade="all, delete-orphan")
+    booking = db.relationship('Booking', backref='business_profile')
 
 
     def Display_photo(self):
@@ -125,21 +126,28 @@ class TaskLog(db.Model):
     __tablename__ = 'task_logs'
     id = db.Column(db.String(200), primary_key=True)
     action = db.Column(db.String(255), nullable=False)
-    booking_id = db.Column(db.String(200), db.ForeignKey('booking.id', ondelete='CASCADE'), nullable=False)
-    technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-    technician = db.relationship('Users', backref='task_logs')
-    booking = db.relationship('Booking', backref='task_logs')
+    technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     def formatted_timestamp(self):
         if self.timestamp:
             return self.timestamp.strftime("%B %d, %Y %I:%M %p")
         return None
-    
-class Actions(db.Model):
-    __tablename__ = 'actions'
+
+
+class Admin(db.Model, UserMixin):
+    __tablename__ = 'admin'
     id = db.Column(db.String(200), primary_key=True)
-    user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    action = db.Column(db.Text, nullable=True)
-    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-    user = db.relationship('Users', backref='actions')
+    username = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    super_admin = db.Column(db.Boolean, default=False)
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+    
+    def get_id(self):
+        return str(self.id)

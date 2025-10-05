@@ -51,7 +51,7 @@ def delete_user():
 @admin_bp.route('/bookings/')
 def bookings():
     context = {
-        'all_bookings': Booking.query.all(),
+        'all_bookings': Booking.query.order_by(Booking.created_at.desc()).all(),
     }
     return render_template('admin.bookings.html', context=context)
 
