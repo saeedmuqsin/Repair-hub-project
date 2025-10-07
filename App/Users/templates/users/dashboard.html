@@ -19,9 +19,10 @@
 </section>
 
 <!-- section display quality services -->
-<section id="services-section" class="bg-dark">
+<section id="services-section" class="bg-light">
+  <h4 class="text-center">Our Services</h4>
   <div class="container">
-    <div class="service-card bg-light">
+    <div class="service-card bg-dark text-light">
       <i class="fa-solid fa-screwdriver-wrench"></i>
       <h3>Trusted Professionals</h3>
       <p>
@@ -30,7 +31,7 @@
       </p>
     </div>
 
-    <div class="service-card bg-light">
+    <div class="service-card bg-dark text-light">
       <i class="fa-solid fa-rotate-left"></i>
       <h3>Quick Turnaround</h3>
       <p>
@@ -39,12 +40,22 @@
       </p>
     </div>
 
-    <div class="service-card bg-light">
+    <div class="service-card bg-dark text-light">
       <i class="fa-solid fa-stethoscope"></i>
       <h3>Free Diagnostics</h3>
       <p>
-        Unsure about the issue with your device? Don't worry, we offer a
-        g </p>
+      Unsure about the issue with your device? Don't worry, we offer a
+      complimentary diagnostic service to identify the problem.
+      </p>
+    </div>
+
+    <div class="service-card bg-dark text-light">
+      <i class="fa-solid fa-shield-alt"></i>
+      <h3>Warranty Protection</h3>
+      <p>
+      All our repairs come with a warranty to ensure your peace of mind and
+      satisfaction with our services.
+      </p>
     </div>
   </div>
 </section>
@@ -78,11 +89,19 @@
 </section>
 
 <!-- Offers section -->
-<div class="container my-4 bg-light" id="offer-section">
-  <h1 class="text-center mt-4">Get Your Mobile Device Repaired Today!</h1>
-  <p class="text-center py-2">We use only the highest quality parts and offer a wide range of repair services, from
-    simple screen replacements to complex motherboard repairs. We also offer same-day repairs in most cases!</p>
-  <a href="" class="text-center btn btn-dark mx-auto d-block">Book a Repair</a>
+<div class="container my-4 bg-dark text-light" id="offer-section">
+  <div class="row">
+    <div class="col-md-6 d-flex align-items-center">
+      <div>
+        <h2>Special Offer: 20% Off on Screen Repairs!</h2>
+        <p>For a limited time, enjoy a 20% discount on all screen repairs for mobile phones, tablets, and laptops. Don't miss out on this fantastic deal to get your device looking brand new again!</p>
+        <a href="/users/appointment_booking" class="btn btn-primary">Book Now</a>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <img src="{{ url_for('users.static', filename='images/special offers.jpg')}}" alt="Special Offer" class="img-fluid rounded ms-2">
+    </div>
+  </div>
 </div>
 
 {% for message in get_flashed_messages() %}

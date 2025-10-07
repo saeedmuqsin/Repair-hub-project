@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 
 from . import users_bp
 
-@users_bp.route("/")
+@users_bp.route("/dashboard")
 @login_required
 def home():
     user_id = request.args.get('id')

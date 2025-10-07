@@ -44,17 +44,37 @@
 
 #services-section {
   height: 50vh;
+  margin-top: 20px;
+
+  h4 {
+    display: block;
+    padding: 20px 5px 7.5px 5px;
+    font-size: 24px;
+    text-align: center;
+    border-bottom: 2px solid #00000098;
+    width: 200px;
+    margin: 0 auto 20px auto;
+  }
 }
 
 #services-section .container {
-  padding-top: 70px;
+  
+  gap: 20px;
+  justify-content: space-around;
+  width: 100%;
 }
 
 #services-section .container .service-card {
-  width: 230px;
-  padding: 20px 7px 7px 7px;
+  width: 340px;
+  padding: 20px 10px 7px 7px;
   border-radius: 10px;
-  height: 180px;
+  height: 200px;
+}
+
+#services-section .container .service-card:hover {
+  transform: scale(1.01);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
 #services-section .container .service-card i {

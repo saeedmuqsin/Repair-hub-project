@@ -1,0 +1,162 @@
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    color: #333;
+}
+
+img.logo {
+    width: 70px;
+    height: 70px;
+    margin: 55px auto 10px auto;
+    display: block;
+}
+
+.header {
+  font-size: 1.4rem;
+  color: #333;
+  margin-top: -10px;
+
+}
+.login_container,
+.register_container {
+    width: 540px;
+    padding: 20px;
+    display: block;
+    margin: 15px auto;
+    background-color: #191923;
+    color: #fff;
+    border-radius: 10px;
+}
+
+
+.alert {
+  width: 530px;
+  font-size: 14px;
+  margin: 20px auto -10px auto;
+  padding: 4px 20px;
+}
+
+.alert button {
+  padding: 0;
+  width: 0;
+  height: 0;
+  font-size: 12px;
+  margin: -5px auto 0px auto;
+}
+.input_group {
+  position: relative;
+  display: block;
+}
+
+.input_group i{
+  position: absolute;
+  top: 55%;
+  right: 10px;
+}
+
+.login_container h1,
+.register_container h1 {
+    font-size: 1.6rem;
+    color: #333333;
+}
+
+.login_container hr,
+.register_container hr {
+    background-color: #3333334b;
+    display: block;
+}
+
+.login_container form,
+.register_container form{
+    margin-top: 20px;
+    padding: 7px;
+}
+
+.register_container .form-input-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 480px) {
+    img.logo {
+        width: 50px;
+        height: 50px;
+        margin: 20px auto 7px auto;
+    }
+  .login_container,
+  .register_container{
+    display: block;
+    width: 90%;
+    margin: 50px auto 0px auto;
+    /* padding: 25px; */
+    font-size: 0.7rem;
+  }
+
+  #header {
+    font-size: 20px;
+  }
+
+  .login_container {
+    height: 400px;
+  }
+ 
+  .alert {
+    width: 90%;
+  }
+
+  .register_container {
+    height: 120vh;
+  }
+
+  .input_group {
+    width: 100%;
+  }
+  .form-input-group {
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    img.logo {
+        width: 70px;
+        height: 70px;
+        margin: 70px auto 7px auto;
+    }
+  .login_container,
+  .register_container{
+    width: 70%;
+    margin: 80px auto;
+    padding: 25px;
+  }
+
+   .register_container {
+    height: 100vh;
+  }
+
+  .alert {
+    width: 70%;
+  }
+}
+
+
+/* Medium desktops or laptops */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .login_container, 
+  .register_container{
+    width: 60%;
+  }
+}
+
+/* Extra large screens */
+@media screen and (min-width: 1440px) {
+  .login_container,
+  .register_container {
+    width: 500px;
+  }
+
+}

@@ -23,7 +23,7 @@
   <body>
     <!-- Navbar on the page. -->
     <nav class="bg-dark text-light" id="Navbar">
-      <a href="/users/?id={{ current_user.id }}" id="brand-logo">
+      <a href="/users/dashboard?id={{ current_user.id }}" id="brand-logo">
         <img
           src="{{ url_for('users.static', filename='images/brand-logo.png')}}"
           alt=""
@@ -33,7 +33,7 @@
 
       <div id="navbarMenu" class="text-light">
         <ul class="navbar-menu text-light">
-          <li class="nav-item"><a href="/users/?id={{ current_user.id }}"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li class="nav-item"><a href="/users/dashboard?id={{ current_user.id }}"><i class="fa-solid fa-house"></i> Home</a></li>
           <li class="nav-item"><a href="/users/history?id={{ current_user.id }}"><i class="fa-solid fa-clock-rotate-left"></i> History</a></li>
           <li class="nav-item"><a href="/users/settings?id={{ current_user.id }}"><i class="fa-solid fa-gear"></i> Settings</a></li>
           <li class="nav-item text-danger"><a  class="text-danger" style="color: red;" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>

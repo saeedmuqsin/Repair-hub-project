@@ -6,7 +6,10 @@ from flask_moment import Moment
 from flask_mail import Mail
 
 db = SQLAlchemy()
-login_manager = LoginManager()
+
 migrate = Migrate()
 moment = Moment()
 mail = Mail()
+
+# login manager for users 
+login_manager = LoginManager()

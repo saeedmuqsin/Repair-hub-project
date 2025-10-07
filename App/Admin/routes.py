@@ -1,10 +1,10 @@
 from . import admin_bp
-from flask import flash, redirect, render_template, request
-from App.models import Booking, BusinessProfile, Users, db
+from flask import flash, redirect, render_template, request, url_for
+from App.models import Booking, BusinessProfile, Users, db, Admin
+from  flask_login import login_user, logout_user, login_required
 
-# Admin routes will be defined in the routes.py file within the Admin directory
-
-@admin_bp.route('/')
+@admin_bp.route('/dashboard/')
+@login_required
 def admin_dashboard():
     context = {
         'total_booking': Booking.query.count(),
@@ -22,6 +22,7 @@ def admin_dashboard():
 
 
 @admin_bp.route('/users/')
+
 def all_users():
     context= {
         'active_users': Users.query.all(),
@@ -29,6 +30,7 @@ def all_users():
     return render_template('admin.users.html', context=context)
 
 @admin_bp.route('/approve_users')
+
 def approve_users():
     user_id =  request.args.get('id')
     user = Users.query.filter_by(id=user_id).first()
@@ -39,6 +41,7 @@ def approve_users():
     return redirect('/admin/users/')
 
 @admin_bp.route('/delete_user')
+
 def delete_user():
     user_id =  request.args.get('id')
     user = Users.query.filter_by(id=user_id).first()
@@ -49,6 +52,7 @@ def delete_user():
     return redirect('/admin/users/')
 
 @admin_bp.route('/bookings/')
+
 def bookings():
     context = {
         'all_bookings': Booking.query.order_by(Booking.created_at.desc()).all(),
@@ -56,6 +60,7 @@ def bookings():
     return render_template('admin.bookings.html', context=context)
 
 @admin_bp.route('/profiles/')
+
 def profiles():
     context = {
         'all_profiles': BusinessProfile.query.all(),
@@ -63,6 +68,7 @@ def profiles():
     return render_template('admin.profiles.html', context=context)
 
 @admin_bp.route('/approve_profile')
+
 def approve_profile():
     profile_id =  request.args.get('id')
     profile = BusinessProfile.query.filter_by(id=profile_id).first()
@@ -73,6 +79,7 @@ def approve_profile():
     return redirect('/admin/profiles/')
 
 @admin_bp.route('/revoke_profile')
+
 def revoke_profile():
     profile_id =  request.args.get('id')
     profile = BusinessProfile.query.filter_by(id=profile_id).first()
