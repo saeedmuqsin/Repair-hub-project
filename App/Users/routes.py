@@ -108,7 +108,7 @@ def proceed_appointment():
                             <!-- Success Text -->
                             <h2 class="fw-bold mb-2">Booking Confirmed!</h2>
                             <p class="mb-4 fs-5 text-dark" style="font-size: 16px;">Your booking was successful.<br>We look forward to serving you.</p>
-                            <a href="/users/" class="btn btn-dark px-4 py-2 fw-semibold shadow-sm">Go to Home</a>
+                            <a href="/users/dashboard" class="btn btn-dark px-4 py-2 fw-semibold shadow-sm">Go to Home</a>
                         </div>
                         <!-- Bootstrap JS (optional for some animations) -->
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -62,8 +62,7 @@ def create_app():
         # the database
         db.create_all()
 
-   
-
+    @app.route("/")
     @app.route("/auth/login", methods=["GET", "POST"])
     def login():
         if request.method == 'POST':
