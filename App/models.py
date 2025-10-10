@@ -2,7 +2,7 @@ from .extensions import db
 from flask_login import UserMixin
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.dialects.postgresql import BYTEA as MEDIUMBLOB
+from sqlalchemy import LargeBinary as MEDIUMBLOB
 from sqlalchemy.types import JSON
 import base64
 import json

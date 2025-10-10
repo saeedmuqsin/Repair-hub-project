@@ -1,1 +1,1 @@
-web: gunicorn "app:app" --factory
+web:gunicorn app:wsgi
