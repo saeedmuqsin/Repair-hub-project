@@ -2,10 +2,11 @@ from .extensions import db
 from flask_login import UserMixin
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.dialects.mysql import MEDIUMBLOB
+from sqlalchemy.dialects.postgresql import BYTEA as MEDIUMBLOB
 from sqlalchemy.types import JSON
 import base64
 import json
+import psycopg2
 
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'

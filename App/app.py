@@ -13,7 +13,8 @@ def create_app():
     app = Flask(__name__)
 
     # configurations for api to be running
-    app.config.from_object(DevelopmentConfig)
+    # Temporarily switch to DevelopmentConfig for local development
+    app.config.from_object(ProductionConfig)
 
     # initializing extensions with the app
     db.init_app(app)
