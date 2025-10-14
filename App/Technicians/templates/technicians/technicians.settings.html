@@ -208,19 +208,33 @@
     Personal Information
   </div>
   <hr>
-  <form action="" class="pb-4 pt-2">
+  <form action="/technician/settings/update_profile" method="POST" class="pb-4 pt-2">
     <div class="row g-4">
-      {% for field, label, type, placeholder, value in [
-      ('username', 'Username:', 'text', 'e.g. John Doe', current_user.username),
-      ('email', 'Email:', 'email', 'e.g. john.doe@example.com', current_user.email),
-      ('phone_number', 'Phone Number:', 'tel', 'e.g. +233 24 000 0000', current_user.phone_number),
-      ('password', 'Password:', 'password', '**********', ''),
-      ] %}
+   
       <div class="col-md-6">
-        <label class="form-label">{{ label }}</label>
-        <input type="{{ type }}" class="form-control" placeholder="{{ placeholder }}" value="{{ value }}">
+        <label class="form-label">Username:</label>
+        <input type="text" class="form-control" placeholder="e.g. John Doe" value="{{ current_user.username }}" name="username"
+          required>
       </div>
-      {% endfor %}
+
+      <div class="col-md-6">
+        <label class="form-label">Email:</label>
+        <input type="text" class="form-control" placeholder="e.g. john.doe@example.com" value="{{ current_user.email }}" name="email"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Phone Number:</label>
+        <input type="text" class="form-control" placeholder="e.g. +1234567890" value="{{ current_user.phone_number }}" name="phone_number"
+          required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Password:</label>
+        <input type="password" class="form-control" placeholder="Enter new password" name="password">
+      </div>
+
+
       <div class="col-md-6">
         <div class="stat-card">
           <label>Business Profiles</label>

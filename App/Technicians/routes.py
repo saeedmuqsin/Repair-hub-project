@@ -1,7 +1,7 @@
 import uuid
 from flask import redirect, render_template, request, url_for, flash
 from flask_login import login_required, current_user
-from App.models import Booking, BusinessProfile, db, TaskLog
+from App.models import Booking, BusinessProfile, db, TaskLog, Users
 from . import technicians_bp
 import json
 import time
@@ -163,3 +163,28 @@ def Decline_Booking():
       booking.status = 'Declined'
       db.session.commit()
    return redirect(url_for('technicians.bookings'))
+
+
+@technicians_bp.route('/settings/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+   # Logic to update technician profile settings goes here
+   if request.method == 'POST':
+      username = request.form.get('username')
+      email = request.form.get('email')
+      phone_number = request.form.get('phone_number')
+
+      # Update the user's profile information
+      updated_user = Users.query.filter_by(id=current_user.id).first()
+      if not updated_user:
+         flash("User not found.", "danger")
+         return redirect(url_for('technicians.dashboard'))
+      else:
+         updated_user.username = username
+         updated_user.email = email
+         updated_user.phone_number = phone_number
+         db.session.commit()
+         flash('Profile updated successfully!', 'success')
+         return redirect(url_for('technicians.dashboard'))
+
+   return redirect(url_for('technicians.dashboard'))
