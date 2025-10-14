@@ -4,6 +4,5 @@ from App.app import create_app
 # It creates the Flask app and runs it. 
 app = create_app()
 
-if __name__ == "__main__":
-    app.run()
+
 
