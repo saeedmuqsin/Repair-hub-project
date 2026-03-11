@@ -1,150 +1,104 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet"
-  href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/fontawesome.min.css') }}" />
-<link rel="stylesheet"
-  href="{{ url_for('static', filename='fontawesome-free-6.7.2-web/fontawesome-free-6.7.2-web/css/solid.css') }}" />
-
-
-<!-- custom styles -->
-<style>
-  .container {
-    width: 700px;
-    margin: auto;
-    padding: 10px;
-  }
-
-  .container .profile-img {
-    width: 100%;
-    height: 150px;
-    margin: 20px auto;
-    text-align: center;
-    display: block;
-  }
-
-  .profile-img img {
-    width: 100px;
-    height: 100px;
-    border: 5px solid #ffffffbb;
-    border-radius: 360%;
-    margin: 0px auto 10px auto;
-  }
-
- 
-
-
-  /* Media Queries */
-  @media (max-width: 1200px) {
-    .container {
-      width: 90%;
-    }
-
-    .form-group input {
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 992px) {
-    .container {
-      width: 95%;
-    }
-
-    .profile-img img {
-      width: 80px;
-      height: 80px;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .container {
-      padding: 5px;
-    }
-
-    .form-group {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .form-group input {
-      width: 100%;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .container h4{
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .profile-img {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .profile-img img {
-      width: 70px;
-      height: 70px;
-    }
-
-  }
-</style>
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h4 class="px-2">
-    <span><i class="fa-solid fa-user" style="font-size: 23px; margin-right: 5px;"></i></span>
-    Personal Profile
-  </h4>
-  <hr>
 
-  <form action="/users/settings?id={{ current_user.id }}" method="POST" enctype="multipart/form-data">
-  
-    <div class="profile-img">
-      <img class="profile-icon" id="profilePhoto"
-        src="data:image/png;base64, {{ current_user.Display_UserProfilePhoto() }}"
-        alt="{{ current_user.username }}"></img>
-      <div class="buttons mx-3">
-        <input type="file" id="fileInput" name="profile-picture" style="display: none;">
-        <label for="fileInput" class="btn btn-primary">Change Photo</label>
+<!-- Settings Content -->
+<!-- <div class="p-6 pt-2">
+  <h2 class="text-2xl font-medium text-gray-800 mt-1">Settings</h2>
+  <p>Manage your account settings here.</p>
+</div> -->
+
+<div class="container p-5 bg-white w-full mx-auto overflow-y-scroll h-[85vh] pb-10">
+  <form action="/users/profile_settings" method="POST" enctype="multipart/form-data" class="p-6">
+
+    <!-- Profile Photo -->
+    <div class="flex items-center space-x-6">
+      <img src="data:image/png;base64,{{ current_user.User_ProfilePhoto() }}" alt="{{ current_user.name }}"
+        class="w-20 h-20 rounded-full object-cover">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Change Profile Photo
+        </label>
+        <input type="file" name="profile-photo" class="mt-2 block w-full text-sm text-gray-500
+                             file:mr-4 file:py-2 file:px-4
+                             file:rounded-md file:border-0
+                             file:text-sm file:font-semibold
+                             file:bg-blue-50 file:text-blue-700
+                             hover:file:bg-blue-100">
+      </div>
+    </div>
+    <hr class="my-3">
+    <!-- Form Fields -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <!-- Example Form Field -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Username
+        </label>
+        <input type="text" name="username" value="{{ current_user.username }}"
+          class="mt-1 w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">
+          Email
+        </label>
+        <input type="email" name="email" value="{{ current_user.email }}"
+          class="mt-1 w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" required>
       </div>
     </div>
 
-      <div class="pb-3">
-        <label for="username" class="form-label">Username:</label>
-        <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}"
-          required>
-      </div>
-
-      <div class="py-3">
-        <label for="phone" class="form-label">Phone-Number:</label>
-        <input type="text" class="form-control" id="phone" name="phone" value="{{ current_user.phone_number }}">
-      </div>
-
-
-    <div class="py-3">
-      <label for="email" class="form-label">Email address:</label>
-      <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+    <!-- Phone number -->
+    <div class="mt-6 mb-3">
+      <label class="block text-sm font-medium text-gray-700">
+        Phone Number
+      </label>
+      <input type="text" name="phone-number" value="{{ current_user.phone_number }}"
+        class="mt-1 w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" required>
     </div>
 
-    <button type="submit" class="btn btn-success my-3">Update Profile</button>
-    <button type="button" class="btn btn-danger my-3" onclick="window.location.href='/users/dashboard'">Cancel</button>
-    </form>
+    <div class="block">
+      <h2 class="mx-2 mt-5 text-lg font-medium">Your Location</h2>
+      <p class="text-md text-gray-500 mx-2 mt-1"><i class="fa-solid fa-location-dot"></i> {{ current_location.city }}, {{ current_location.country }}</p>
+    </div>
+    <hr class="mt-5 mb-3">
+
+    <div class="flex justify-end mt-6">
+      <button type="submit" disabled  class="disabled:bg-gray-400 text-sm bg-blue-400 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+        Save Changes
+      </button>
+
+      <a href="/users/dashboard?id={{ current_user.id }}" class="mx-5 text-sm bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 px-4 rounded">
+        Cancel
+      </a>
+      <!-- Success Modal -->
+     
+    </div>
+  </form>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  // profile photo preview
-  document.getElementById('fileInput').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById('profilePhoto').src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+
+  const form = document.querySelector('form');
+  const submitButton = document.querySelector('button[type="submit"]');
+  const inputs = form.querySelectorAll('input');
+
+  function enableButton() {
+    submitButton.disabled = false;
+  }
+
+  inputs.forEach(input => {
+    input.addEventListener('click', enableButton);
+    input.addEventListener('keyup', enableButton);
+    input.addEventListener('keydown', enableButton);
   });
 </script>
 {% endblock %}

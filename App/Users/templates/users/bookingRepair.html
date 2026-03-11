@@ -1,0 +1,179 @@
+{% extends "base.html" %} {% block head %}
+
+{% endblock %}
+
+{% block content %}
+<!-- header of the page -->
+<div class="md:flex lg:flex items-center justify-between p-4">
+
+  <div class="block">
+    <h2 class="text-2xl font-medium">Find Technician</h2>
+    <p class="text-gray-500">Choose a technician and book appointment.</p>
+  </div>
+  <input type="text" placeholder="Search technician..."
+    class="w-full mx-0 mt-2 md:w-1/4 lg:w-1/4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300">
+
+</div>
+
+<!-- list of techniicians -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+
+
+  {% if technicians %}
+
+  <!-- Technician Card -->
+  {% for technician in technicians %}
+  <div class="bg-white rounded-xl shadow p-4 mx-2 ">
+
+    <div class="flex items-center gap-3">
+
+      <img src="data:image/png;base64, {{ technician.Display_photo() }}" alt="{{ technician.name }}"
+        class="w-14 h-14 rounded-full">
+
+      <div>
+        <h3 class="font-semibold text-gray-800">
+          {{ technician.name }}
+        </h3>
+
+        <p class="text-sm text-gray-500">
+          {{ technician.services_offered }}
+        </p>
+
+        <p class="text-sm text-yellow-500">
+          {{ technician.location }}
+        </p>
+      </div>
+
+    </div>
+
+    <button onclick="openModal('{{ technician.name }}')"
+      class=" text-sm mt-4 w-full bg-blue-300 hover:bg-blue-500 text-white py-2 rounded-lg">
+      Book Technician
+    </button>
+
+  </div>
+
+  <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+
+    <div class="block bg-white rounded-xl shadow-lg w-full mx-5 lg:w-1/2 lg:mx-auto p-6">
+
+      <h2 class="text-lg font-semibold mb-4">
+        Place Booking with <span id="techName"></span>
+      </h2>
+      <hr>
+      <form action="/users/appointment_booking?id={{ technician.id }}" method="POST" id="bookingForm"
+        enctype="multipart/form-data" class="space-y-3">
+
+        <input type="hidden" name="technician_id" id="technicianId" value="">
+
+        <select type="text" name="device-type" placeholder="Appliance (Laptop, Phone)"
+          class="w-full border rounded-lg p-2">
+          <option value="" disabled selected>Select Device</option>
+          <option value="laptop">Laptop</option>
+          <option value="phone">Phone</option>
+          <option value="tablet">Tablet</option>
+        </select>
+
+        <textarea name="description" placeholder="Describe the problem" class="w-full border rounded-lg p-2"></textarea>
+
+        <select type="text" name="device_brand" id="deviceBrand" placeholder="Device Brand" class="w-full border rounded-lg p-2">
+          <option value="" disabled selected>Select Device Brand</option>
+        </select>
+
+        <div class="flex items-center gap-2 w-full border rounded-lg p-2 bg-gray-50">
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+            </path>
+          </svg>
+          <input type="file" name="device-photo" class="flex-1 border-0 bg-transparent focus:outline-none text-sm">
+        </div>
+
+        <div class="flex justify-end gap-2">
+
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded-lg">
+            Cancel
+          </button>
+
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+            Confirm
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  {% endfor %}
+
+  {% else %}
+  <p class="text-center text-gray-500 col-span-full mt-7">
+    No technicians available at the moment. Please check back later.
+  </p>
+  {% endif %}
+
+  <!-- Booking Modal -->
+
+  {% endblock %}
+
+  {% block scripts %}
+  <script>
+    function openModal(name) {
+      document.getElementById("bookingModal").classList.remove("hidden");
+      document.getElementById("bookingModal").classList.add("flex");
+
+      document.getElementById("techName").innerText = name;
+    }
+
+    function closeModal() {
+      document.getElementById("bookingModal").classList.add("hidden");
+    }
+
+    function closeSuccess() {
+      document.getElementById("successModal").classList.add("hidden");
+    }
+
+    // Search functionality that filters technician cards based on the search input
+    document.querySelector('input[placeholder="Search technician..."]').addEventListener('keyup', function (e) {
+      const searchValue = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll('.bg-white.rounded-xl');
+
+      cards.forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+
+        if (name.includes(searchValue)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // Dynamically populate device brands based on selected device type
+    document.querySelector('select[name="device-type"]').addEventListener('change', function (e) {
+      const deviceType = e.target.value;
+      const brandSelect = document.getElementById('deviceBrand');
+      brandSelect.innerHTML = '<option value="" disabled selected>Select Device Brand</option>';
+
+      let brands = [];
+
+      if (deviceType === 'laptop') {
+        brands = ['Dell', 'HP', 'Lenovo', 'Apple', 'Asus'];
+      } else if (deviceType === 'phone') {
+        brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Huawei'];
+      } else if (deviceType === 'tablet') {
+        brands = ['Apple', 'Samsung', 'Amazon', 'Microsoft', 'Lenovo'];
+      }
+
+      brands.forEach(brand => {
+        const option = document.createElement('option');
+        option.value = brand.toLowerCase();
+        option.textContent = brand;
+        brandSelect.appendChild(option);
+      });
+    });
+  </script>
+  {% endblock %}

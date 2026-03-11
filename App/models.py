@@ -11,6 +11,7 @@ import psycopg2
 class Users(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.String(200), primary_key=True)
+    profile_id = db.Column(MEDIUMBLOB, nullable=True)
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(200), nullable=False)
@@ -19,12 +20,10 @@ class Users(db.Model, UserMixin):
     role = db.Column(db.String(50), nullable=False)  # e.g., 'customer', 'technician'
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     photo = db.Column(MEDIUMBLOB, nullable=True)
-    profile_id = db.Column(MEDIUMBLOB, nullable=True)
-    is_active = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
     booking = db.relationship('Booking', backref="user", cascade="all, delete-orphan")
-    task_logs = db.relationship('TaskLog', backref='booking', cascade="all, delete-orphan")
-    business_profile = db.relationship(
-        'BusinessProfile',
+    technician = db.relationship(
+        'Technician',
         backref="technician",
         cascade="all, delete-orphan"
     )
@@ -38,7 +37,7 @@ class Users(db.Model, UserMixin):
     def get_id(self):
         return str(self.id)
     
-    def Display_UserProfilePhoto(self):
+    def User_ProfilePhoto(self):
         encoded_img = base64.b64encode(self.photo).decode('utf-8')
         return encoded_img
     
@@ -56,14 +55,14 @@ class Booking(db.Model):
     __tablename__ = "booking"
     id = db.Column(db.String(200), primary_key=True)
     device_type = db.Column(db.String(200), nullable = False)
-    problem  = db.Column(db.String(150), nullable = False)
     problem_description = db.Column(db.Text, nullable = False)
     status = db.Column(db.String(200), nullable=False, default='Pending')
     location = db.Column(db.String(100),nullable = False)
     device_photo = db.Column(MEDIUMBLOB, nullable = False)
     user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    service_profile = db.Column(db.String(200), db.ForeignKey('business_profiles.id', ondelete='CASCADE'), default="Profile Deleted", nullable=False)
+    service_profile = db.Column(db.String(200), db.ForeignKey('Technician.id', ondelete='CASCADE'), default="Profile Deleted", nullable=False)
     completed_date = db.Column(db.String(200), default = 'Not yet')
+    device_brand = db.Column(db.String(100), nullable=False)
 
     def Display_deviceImage(self):
         encoded_img = base64.b64encode(self.device_photo).decode('utf-8')
@@ -75,40 +74,25 @@ class Booking(db.Model):
             return self.created_at.strftime("%B %d, %Y %I:%M %p")
         return None
 
-class BusinessProfile(db.Model):
-    __tablename__ = 'business_profiles'
+class Technician(db.Model):
+    __tablename__ = 'Technician'
     id = db.Column(db.String(200), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(100), nullable=False)
-    services_offered = db.Column(JSON, nullable=False)
+    services_offered = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     photo = db.Column(MEDIUMBLOB, nullable=False)
-    technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     is_approved = db.Column(db.Boolean, default=False)
-    booking = db.relationship('Booking', backref='business_profile')
+    booking = db.relationship('Booking', backref='Technician', cascade="all, delete-orphan")
 
 
     def Display_photo(self):
         encoded_img = base64.b64encode(self.photo).decode('utf-8')
         return encoded_img
-    
-    def get_services_list(self):
-        if isinstance(self.services_offered, list):
-            return self.services_offered
-        elif isinstance(self.services_offered, dict):
-            return list(self.services_offered.values())
-        elif isinstance(self.services_offered, str):
-            try:
-                data = json.loads(self.services_offered)
-                if isinstance(data, list):
-                    return data
-                elif isinstance(data, dict):
-                    return list(data.values())
-            except Exception:
-                return []
-        return []
-    
+
+
     def Total_Booking(self, id):
         total_booking  = Booking.query.filter_by(service_profile = id).count()
         return total_booking
@@ -128,7 +112,7 @@ class TaskLog(db.Model):
     id = db.Column(db.String(200), primary_key=True)
     action = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-    technician_id = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    service_profile = db.Column(db.String(200), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     def formatted_timestamp(self):
         if self.timestamp:

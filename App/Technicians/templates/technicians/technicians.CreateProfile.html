@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+
+        <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
+
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Create Technician Profile
+                </h2>
+                <p class="text-gray-500 text-sm">
+                    This information will be visible to customers
+                </p>
+            </div>
+
+            <!-- Form -->
+            <form action="/technician/create_profile/" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <!-- Technician Brand Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Technician Brand Name
+                    </label>
+                    <input type="text" placeholder="e.g FixPro Electronics"
+                       name="profile_name"  class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+
+                <!-- Location -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Location
+                    </label>
+                    <input type="text" placeholder="e.g East Legon, Accra"
+                       name="location"  class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+
+                <!-- Services Offered -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Services Offered
+                    </label>
+
+                    <select name="services_offered" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500">
+                        <option>Select service</option>
+                        <option>Phone Repair</option>
+                        <option>Laptop Repair</option>
+                        <option>Fridge Repair</option>
+                        <option>TV Repair</option>
+                        <option>General Electronics</option>
+                    </select>
+
+                </div>
+
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Description
+                    </label>
+
+                    <textarea rows="4" placeholder="Describe your services and experience"
+                        class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none" name="description"></textarea>
+                </div>
+
+
+                <!-- Brand Photo -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Brand Photo / Logo
+                    </label>
+
+                    <input type="file" name="brand_photo" class="w-full border rounded-lg p-2 bg-white">
+                </div>
+
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-blue-400 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition">
+                        Save Profile
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

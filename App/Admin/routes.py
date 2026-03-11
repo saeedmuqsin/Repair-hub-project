@@ -1,6 +1,6 @@
 from . import admin_bp
 from flask import flash, redirect, render_template, request, url_for
-from App.models import Booking, BusinessProfile, Users, db, Admin
+from App.models import Booking, Technician, Users, db, Admin
 from  flask_login import login_user, logout_user, login_required
 
 @admin_bp.route('/dashboard/')
@@ -9,14 +9,14 @@ def admin_dashboard():
     context = {
         'total_booking': Booking.query.count(),
         'total_users': Users.query.filter(Users.role != 'admin', Users.is_active == True).count(),
-        'total_profiles': BusinessProfile.query.filter_by(is_approved=True).count(),
-        'all_profiles': BusinessProfile.query.filter_by(is_approved=True).all(),
+        'total_profiles': Technician.query.filter_by(is_approved=True).count(),
+        'all_profiles': Technician.query.filter_by(is_approved=True).all(),
 
     }
     stats = {
             'users': Users.query.filter(Users.role != 'admin', Users.is_active == True).count(),
             'bookings': Booking.query.count(),
-            'profiles': BusinessProfile.query.filter_by(is_approved=True).count()
+            'profiles': Technician.query.filter_by(is_approved=True).count()
         }
     return render_template('admin.dashboard.html', context=context,stats=stats)
 
@@ -31,14 +31,14 @@ def all_users():
 
 @admin_bp.route('/approve_users')
 
-def approve_users():
-    user_id =  request.args.get('id')
-    user = Users.query.filter_by(id=user_id).first()
-    if user:
-        user.is_active = True
-        db.session.commit()
-        flash(" User Approved Successfully", "success")
-    return redirect('/admin/users/')
+# def approve_users():
+#     user_id =  request.args.get('id')
+#     user = Users.query.filter_by(id=user_id).first()
+#     if user:
+#         user.is_active = True
+#         db.session.commit()
+#         flash(" User Approved Successfully", "success")
+#     return redirect('/admin/users/')
 
 @admin_bp.route('/delete_user')
 
@@ -63,7 +63,7 @@ def bookings():
 
 def profiles():
     context = {
-        'all_profiles': BusinessProfile.query.all(),
+        'all_profiles': Technician.query.all(),
     }
     return render_template('admin.profiles.html', context=context)
 
@@ -71,7 +71,7 @@ def profiles():
 
 def approve_profile():
     profile_id =  request.args.get('id')
-    profile = BusinessProfile.query.filter_by(id=profile_id).first()
+    profile = Technician.query.filter_by(id=profile_id).first()
     if profile:
         profile.is_approved = True
         db.session.commit()
@@ -82,7 +82,7 @@ def approve_profile():
 
 def revoke_profile():
     profile_id =  request.args.get('id')
-    profile = BusinessProfile.query.filter_by(id=profile_id).first()
+    profile = Technician.query.filter_by(id=profile_id).first()
     if profile:
         profile.is_approved = False
         db.session.commit()

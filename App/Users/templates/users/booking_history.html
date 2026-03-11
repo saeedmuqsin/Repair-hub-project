@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Page Title -->
+    <div class="block mb-6">
+        <h1 class="text-2xl font-medium text-gray-800 mt-[-10px]">Booking History</h1>
+        <p class="text-gray-600 mt-1">Review your past bookings and their statuses.</p>
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- DESKTOP / TABLET TABLE VIEW -->
+    <!-- ============================= -->
+
+    <div class="hidden md:block bg-white shadow rounded-xl overflow-hidden">
+
+        <table class="min-w-full text-sm">
+
+            <thead class="bg-gray-50 text-gray-600 text-sm">
+                <tr>
+                    <th class="px-6 py-4 text-left">Booking ID</th>
+                    <th class="px-6 py-4 text-left">Appliance</th>
+                    <th class="px-6 py-4 text-left">Technician</th>
+                    <th class="px-6 py-4 text-left">Date</th>
+                    <th class="px-6 py-4 text-left">Status</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y">
+
+                {% for booking in bookings %}
+
+                <tr class="hover:bg-gray-50">
+
+                    <td class="px-6 py-4 font-medium text-gray-700">
+                        #{{ booking.id }}
+                    </td>
+
+                    <td class="px-6 py-4 capitalize">
+                        {{ booking.device_type }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ booking.Technician.name }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ booking.formatted_created_at() }}
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        {% if booking.status == "Pending" %}
+                        <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs">
+                            Pending
+                        </span>
+
+                        {% elif booking.status == "Accepted" %}
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
+                            Accepted
+                        </span>
+
+                        {% elif booking.status == "Completed" %}
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
+                            Completed
+                        </span>
+
+                        {% elif booking.status == "Cancelled" %}
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs">
+                            Cancelled
+                        </span>
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- ============================= -->
+    <!-- MOBILE LIST VIEW -->
+    <!-- ============================= -->
+
+    <div class="md:hidden space-y-4">
+
+        {% for booking in bookings %}
+
+        <div class="bg-white shadow rounded-lg p-4">
+
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-semibold text-gray-800">
+                    Booking #{{ booking.id }}
+                </h3>
+
+                {% if booking.status == "Pending" %}
+                <span class="bg-yellow-100 text-yellow-700 px-2 py-1 text-xs rounded-full">
+                    Pending
+                </span>
+
+                {% elif booking.status == "Accepted" %}
+                <span class="bg-blue-100 text-blue-700 px-2 py-1 text-xs rounded-full">
+                    Accepted
+                </span>
+
+                {% elif booking.status == "Completed" %}
+                <span class="bg-green-100 text-green-700 px-2 py-1 text-xs rounded-full">
+                    Completed
+                </span>
+
+                {% elif booking.status == "Cancelled" %}
+                <span class="bg-red-100 text-red-700 px-2 py-1 text-xs rounded-full">
+                    Cancelled
+                </span>
+                {% endif %}
+            </div>
+
+            <p class="text-sm text-gray-600 capitalize">
+                <strong>Appliance:</strong> {{ booking.device_type }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+                <strong>Provider:</strong> {{ booking.Technician.name }}
+            </p>
+
+            <p class="text-sm text-gray-600">
+                <strong>Date:</strong> {{ booking.formatted_created_at() }}
+            </p>
+
+            <div class="flex gap-4 mt-3">
+
+                <button class="text-blue-600 text-sm font-medium">
+                    View
+                </button>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

@@ -5,7 +5,7 @@ from flask_mail import Message
 from .Users import users_bp
 from .Technicians import technicians_bp
 from .Admin import admin_bp
-from .models import Users, Admin
+from .models import Users, Admin, Technician
 from .config import DevelopmentConfig, ProductionConfig
 from .extensions import migrate, db, mail, moment, login_manager
 
@@ -14,7 +14,7 @@ def create_app():
 
     # configurations for api to be running
     # Temporarily switch to DevelopmentConfig for local development
-    app.config.from_object(ProductionConfig)
+    app.config.from_object(DevelopmentConfig)
 
     # initializing extensions with the app
     db.init_app(app)
@@ -77,13 +77,106 @@ def create_app():
             if existingUser and existingUser.check_password(password) == True and existingUser.role == "customer" and existingUser.is_active == True:
                 # Login successful
                 login_user(existingUser)
-                return redirect(f"/users/dashboard")
+                return redirect(f"/users/dashboard?id={current_user.id}")
             
             
             #  Technicians view
             elif existingUser and existingUser.check_password(password) == True and existingUser.role == "technician" and existingUser.is_active == True:
-                login_user(existingUser)
-                return redirect("/technician/dashboard")
+                if Technician.query.filter_by(user_id= existingUser.id, is_approved=True).first():
+                    login_user(existingUser)
+                    return redirect("/technician/dashboard")
+                else:
+                    login_user(existingUser)
+                    return """
+
+      <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* Clock rotation animation */
+        @keyframes spinSlow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .clock-animate {
+            animation: spinSlow 3s linear infinite;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <!-- Card -->
+    <div class="bg-white shadow-lg rounded-xl p-8 text-center max-w-md w-full fade-in">
+
+        <!-- Animated Clock Icon -->
+        <div class="text-blue-400 text-5xl mb-4">
+
+            <i class="fa-solid fa-clock clock-animate"></i>
+
+        </div>
+
+        <!-- Message -->
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">
+            Profile Pending Approval
+        </h2>
+
+        <p class="text-gray-600 text-sm mb-4">
+            Your profile has been successfully created.
+        </p>
+
+        <p class="text-gray-500 text-sm">
+            Please wait within <span class="font-semibold text-gray-700">24 hours</span>
+            for approval by the admin.
+        </p>
+
+        <!-- Status Badge -->
+        <div class="mt-6">
+
+            <a href="/auth/login" class="bg-blue-400 text-white px-4 py-2 rounded-full text-sm font-medium">
+                Go back to login
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+"""
             
             else:
                 flash("Invalid email or password.")
@@ -150,11 +243,25 @@ def create_app():
                     except Exception as e:
                         flash("Error uploading profile ID. Please try again.")
                         return redirect(url_for('register'))
+                    
+                # checking the role of the user
+                # the role of the user is customer then a customer account will be created and 
+                # if the role is technician then a technician account will be created.
 
-                new_user.role = role
+                if role =="customer":
+                    new_user.role = role
+                    new_user.role = role
+                    db.session.add(new_user)
+                    db.session.commit()
 
-                db.session.add(new_user)
-                db.session.commit()
+                elif role == "technician":
+                    new_user.role = role
+                    db.session.add(new_user)
+                    db.session.commit()
+
+                    login_user(new_user)
+                    return redirect(url_for('technicians.create_profile'))
+                
                 flash('Account successfully created.')
                 return redirect(url_for('login'))
             
