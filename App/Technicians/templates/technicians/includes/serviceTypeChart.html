@@ -1,0 +1,40 @@
+<div class="bg-white rounded-lg shadow p-4 w-[500px] h-[400px]">
+    <h2 class="text-lg font-medium text-gray-700">Bookings by Service Type</h2>
+    <hr class="mt-1.5 mb-3">
+    <canvas class="block mx-auto" id="serviceTypeChart"></canvas>
+    <hr class="mt-1.5 mb-3">
+</div>
+
+<script>
+    // Service Type Chart
+    const serviceTypeCtx = document.getElementById('serviceTypeChart').getContext('2d');
+
+
+    const serviceTypeChart = new Chart(serviceTypeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ["Phone Repair", "Laptop Repair", "Tablet Repair"], // Example labels, replace with actual service types
+            datasets: [{
+                data: [
+                    "{{ phone }}", "{{ laptop }}", '{{ tablet }}'
+                ], // Example data, replace with actual counts
+                backgroundColor: ['#3B82F6', '#06B6D4', '#8B5CF6', '#EC4899'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            radius: "65%",
+            layout: {
+                padding: 0,
+                margin: 0
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+</script>

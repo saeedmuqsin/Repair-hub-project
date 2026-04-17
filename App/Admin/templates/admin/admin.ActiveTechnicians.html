@@ -1,0 +1,270 @@
+{% extends 'admin.base.html' %} {% block head %} {% endblock %} {% block content
+%}
+<div
+  class="container w-[95%] mt-3 bg-white p-4 mx-auto rounded-md h-[80%] overflow-y-scroll"
+>
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-lg font-medium">Active Technicians.</h2>
+      <p class="text-sm text-gray-600">
+        All active and working technicians.
+      </p>
+    </div>
+    <input
+      type="text"
+      placeholder="search technician's name"
+      name="search-input"
+      class="w-2/5 border mt-2 rounded-lg p-2 h-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    />
+  </div>
+  <table class="min-w-full divide-y divide-gray-200 mt-6">
+    <thead>
+      <tr>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Name
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Account Type
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Total Bookings
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Date Joined
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Status
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for user in active_technicians %}
+      <tr>
+        <td class="px-6 py-4 white flex items-center">
+         <img
+            class="h-9 w-9 rounded-full mr-3"
+            src="data:image/png;base64,{{ user.Display_photo() }}"
+            alt="Profile Photo"
+          />
+           <div class="block">
+            <span class="text-sm font-medium text-gray-900 block"
+              >{{ user.name }}</span
+            >
+            <span class="text-xs font-medium text-gray-500 block"
+              >{{ user.technician.email }}</span
+            >
+          </div>
+        </td>
+         <td class="px-6 py-4 whitespace-nowrap">
+          <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"
+            >{{ user.technician.role }}</span
+          >
+        </td>
+
+         <td class="px-6 py-4 whitespace-nowrap">
+          <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold"
+            >{{ user.get_TotalBooking(user.id) }}</span
+          >
+        </td>
+
+         <td class="px-6 py-4 whitespace-nowrap">
+          <span
+            class="px-2 inline-flex text-xs leading-5 "
+            >{{ user.formatted_created_at() }}</span
+          >
+        </td>
+
+        <td class="px-6 py-4 whitespace-nowrap">
+          {% if user.is_approved == true %}
+           <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+          >
+            Active
+          </span>
+          {% else %}
+            <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+          >
+            Inactive
+          </span>
+
+          {% endif %}
+       </td>
+       <td class="px-6 py-4 whitespace-nowrap">
+        <button 
+          class="bg-blue-300 px-4 py-1.5 text-sm rounded-md text-white hover:bg-blue-600 open-modal-btn"
+          data-technician-id="{{ user.id }}"
+          data-technician-name="{{ user.name }}"
+          data-technician-location="{{ user.location }}"
+          data-technician-services="{{ user.services_offered }}"
+          data-technician-description="{{ user.description }}"
+          data-technician-approved="{{ user.is_approved|lower }}"
+        >
+          details
+        </button>
+       </td>
+      </tr>
+      {% endfor %}
+  </table>
+</div>
+
+<!-- Approval Modal -->
+<div id="approvalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6">
+    <div class="flex items-center justify-between border-b pb-4 mb-4">
+      <h3 class="text-xl font-semibold text-gray-800">Technician Profile Review</h3>
+      <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+
+    <div class="space-y-4 max-h-96 overflow-y-auto">
+      <!-- Technician Details -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-gray-600">Brand Name</label>
+          <p id="modalTechnicianName" class="text-gray-800 font-medium"></p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-600">Location</label>
+          <p id="modalTechnicianLocation" class="text-gray-800"></p>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Services Offered</label>
+        <p id="modalTechnicianServices" class="text-gray-800 bg-blue-50 px-3 py-2 rounded"></p>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Description</label>
+        <p id="modalTechnicianDescription" class="text-gray-800 bg-gray-50 px-3 py-2 rounded max-h-24 overflow-y-auto"></p>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium text-gray-600">Status</label>
+        <div class="flex items-center space-x-2">
+          <span id="modalApprovalStatus" class="px-3 py-1 rounded-full text-xs font-semibold"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center justify-end space-x-3 border-t pt-4 mt-4">
+      <a href="" id="rejectBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md text-sm font-medium transition">
+        Reject
+      </a>
+      <a id="approveBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md text-sm font-medium transition">
+        Approve
+      </a>
+      <button id="cancelBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium transition">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+  const modal = document.getElementById('approvalModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const approveBtn = document.getElementById('approveBtn');
+  const rejectBtn = document.getElementById('rejectBtn');
+  const openModalBtns = document.querySelectorAll('.open-modal-btn');
+  
+  let currentTechnicianId = null;
+
+  // Open modal
+  openModalBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTechnicianId = btn.dataset.technicianId;
+      document.getElementById('modalTechnicianName').textContent = btn.dataset.technicianName;
+      document.getElementById('modalTechnicianLocation').textContent = btn.dataset.technicianLocation;
+      document.getElementById('modalTechnicianServices').textContent = btn.dataset.technicianServices;
+      document.getElementById('modalTechnicianDescription').textContent = btn.dataset.technicianDescription;
+      
+      const isApproved = btn.dataset.technicianApproved === 'true';
+      const statusEl = document.getElementById('modalApprovalStatus');
+      if (isApproved) {
+        statusEl.textContent = 'Active';
+        statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800';
+        approveBtn.disabled = true;
+        approveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        rejectBtn.href = `http://127.0.0.1:5000/admin/revoke-technician/${currentTechnicianId}`
+      } else {
+        statusEl.textContent = 'inactive';
+        statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800';
+        approveBtn.disabled = false;
+        rejectBtn.disabled = true;
+        approveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        approveBtn.href = `http://127.0.0.1:5000/admin/approve-technician/${currentTechnicianId}`
+      }
+      
+      modal.classList.remove('hidden');
+    });
+  });
+
+  // Close modal
+  const closeModal = () => {
+    modal.classList.add('hidden');
+  };
+
+  closeModalBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+
+  
+
+  // Close modal when clicking outside of it
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.querySelector('input[name="search-input"]');
+    const tableBody = document.querySelector("tbody");
+
+    searchInput.addEventListener("input", function () {
+      const searchTerm = this.value.toLowerCase();
+      const rows = tableBody.querySelectorAll("tr");
+
+      rows.forEach((row) => {
+        const customerName = row
+          .querySelector("td:first-child .block span:first-child")
+          .textContent.toLowerCase();
+        if (customerName.includes(searchTerm)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    });
+  });
+
+</script>
+{% endblock %}

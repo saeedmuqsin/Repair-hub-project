@@ -1,282 +1,76 @@
-{% extends 'technicians.base.html' %}
+{%- extends "technicians.base.html" %} {%- block content %}
 
-{% block head %}
-<!-- Dashboard Styles -->
-<style>
-  /* General body styling */
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  .card-stat {
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.2s;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    background-color: #5BC3EB;
-    color: #fff;
-  }
-
-  .card-stat:hover {
-    transform: translateY(-5px);
-  }
-
-  .card-icon {
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
-
-  .pending,
-  .in-progress,
-  .completed,
-  .declined {
-    color: #fff;
-  }
-
-  .list-box {
-    background: #ffffff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    height: 50vh;
-    overflow-y: scroll;
-  }
-
-  .list-box-2 {
-    background: #ffffff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    height: 50vh;
-  }
-
-  .list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #f1f1f1;
-  }
-
-  .list-item:last-child {
-    border-bottom: none;
-  }
-
-  .top-nav {
-    padding: 10px;
-    border-radius: 15px 15px 0 0;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .top-nav h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #191516;
-  }
-
-  .top-nav .profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-right: 20px;
-  }
-
-  .top-nav .profile img {
-    height: 30px;
-    width: 35px;
-    border-radius: 10px;
-  }
-
-  .top-nav .profile p {
-    margin: 0;
-    font-weight: 500;
-  }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="top-nav">
-  <h3>Welcome Technician</h3>
-  <div class="profile">
-    <img class="profile-icon" src="data:image/png;base64, {{ current_user.Display_UserProfilePhoto() }}"
-      alt="{{ current_user.username }}"></img>
-    <p>
-      {{ current_user.username }}
-    </p>
-  </div>
-</div>
-<!-- Booking Status Cards -->
-<div class="row g-3 mb-4">
-  <div class="col-md-6 col-lg-3">
-    <div class="card-stat">
-      <div class="card-icon pending"><i class="bi bi-hourglass-split"></i></div>
-      <h5>Pending</h5>
-      <h3>{{ context.bookings_pending }}</h3>
+<!-- service provider -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-chart-gantt text-center p-5 bg-gray-200 text-black rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Total Jobs</p>
+      <p class="text-lg font-medium text-gray-800">
+        {{ total_bookings | count }}
+      </p>
     </div>
   </div>
-  <div class="col-md-6 col-lg-3">
-    <div class="card-stat">
-      <div class="card-icon in-progress"><i class="bi bi-tools"></i></div>
-      <h5>In Progress</h5>
-      <h3>{{ context.bookings_in_progress }}</h3>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-check text-center p-5 bg-green-100 text-green-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Completed</p>
+      <p class="text-lg font-medium text-gray-800">{{ completed_bookings }}</p>
     </div>
   </div>
-  <div class="col-md-6 col-lg-3">
-    <div class="card-stat">
-      <div class="card-icon completed"><i class="bi bi-check-circle"></i></div>
-      <h5>Completed</h5>
-      <h3>{{ context.bookings_completed }}</h3>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-hourglass-half text-center p-5 bg-yellow-100 text-yellow-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Pending</p>
+      <p class="text-lg font-medium text-gray-800">{{ pending_bookings }}</p>
     </div>
   </div>
-  <div class="col-md-6 col-lg-3">
-    <div class="card-stat">
-      <div class="card-icon declined"><i class="bi bi-x-circle"></i></div>
-      <h5>Declined</h5>
-      <h3>{{ context.bookings_declined }}</h3>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-xmark text-center p-5 bg-red-100 text-red-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Cancelled</p>
+      <p class="text-lg font-medium text-gray-800">{{ cancelled_bookings }}</p>
     </div>
   </div>
 </div>
 
-<div class="row g-4">
-
-  <!-- Notifications -->
-  <div class="col-lg-6">
-    <div class="list-box-2">
-      <h5 class="mb-3"><i class="bi bi-bar-chart"></i> Booking Status Overview</h5>
-      <canvas id="bookingStatusChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Recent Repair Tasks -->
-  <div class="col-lg-6">
-    <div class="list-box">
-      <h5 class="mb-3"><i class="bi bi-tools"></i> Recent Repair Tasks</h5>
-
-      {% if not context.task_logs %}
-      <p class="text-center mt-5">No recent tasks available.</p>
-      {% else %}
-      {% for task in context.task_logs %}
-      <div class="list-item">
-        <span>
-          {% if task.booking.device_type == "laptop" %}
-          <i class="bi bi-laptop me-2"></i>
-          {% elif task.booking.device_type == "phone" %}
-          <i class="bi bi-phone me-2"></i>
-          {% else %}
-          <i class="bi bi-device-meeting me-2"></i>
-          {% endif %}
-          {{ task.action|capitalize() }}
-        </span>
-        <small>{{ moment(task.timestamp).fromNow() }}</small>
-      </div>
-      {% endfor %}
-      {% endif %}
-    </div>
-  </div>
-
-
+<!-- Charts  -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+  {% include 'includes/serviceTypeChart.html' %} {% include
+  'includes/MonthTasksChart.html' %}
 </div>
-</div>
+
 {% for message in get_flashed_messages() %}
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div class="toast d-block 
-      {% if message_category == 'success' %}bg-success text-white
-      {% elif message_category == 'error' %}bg-danger text-white
-      {% elif message_category == 'warning' %}bg-warning text-dark
-      {% elif message_category == 'info' %}bg-info text-dark
-      {% else %}bg-light text-dark{% endif %}" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header 
-        {% if message_category == 'success' %}bg-success text-white
-        {% elif message_category == 'error' %}bg-danger text-white
-        {% elif message_category == 'warning' %}bg-warning text-dark
-        {% elif message_category == 'info' %}bg-info text-dark
-        {% else %}bg-light text-dark{% endif %}">
-      <i class="bi 
-          {% if message_category == 'success' %}bi-check-circle-fill text-white
-          {% elif message_category == 'error' %}bi-x-circle-fill text-white
-          {% elif message_category == 'warning' %}bi-exclamation-triangle-fill text-dark
-          {% elif message_category == 'info' %}bi-info-circle-fill text-dark
-          {% else %}bi-info-circle text-dark{% endif %} me-2"></i>
-      <strong class="me-auto">
-        {% if message_category == 'success' %}Success
-        {% elif message_category == 'error' %}Error
-        {% elif message_category == 'warning' %}Warning
-        {% elif message_category == 'info' %}Info
-        {% else %}Notification{% endif %}
-      </strong>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div
+  id="successModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  role="alertdialog"
+>
+  <div class="bg-white rounded-lg p-8 text-center">
+    <div class="mb-4">
+      <i class="fa-solid fa-circle-check text-green-500 text-5xl"></i>
     </div>
-    <div class="toast-body">
-      {{ message }}
-    </div>
+    <h3 class="text-xl font-medium text-gray-800 mb-2">Success!</h3>
+    <p class="text-gray-600 mb-6">{{ message }}</p>
+    <button
+      type="button"
+      onclick="this.closest('[role=alertdialog]').classList.add('hidden')"
+      class="bg-blue-400 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded"
+    >
+      Close
+    </button>
   </div>
 </div>
-{% endfor %}
-{% endblock %}
 
-{% block script %}
-<!-- Ensure Bootstrap JS is loaded -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-    toastElList.forEach(function (toastEl) {
-      var toast = new bootstrap.Toast(toastEl);
-      toast.show();
-    });
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('bookingStatusChart').getContext('2d');
-    const stats = JSON.parse('{{ context.stats | tojson | safe }}');
-    console.log(stats);
-    const bookingStatusChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Pending', 'In Progress', 'Completed', 'Declined'],
-        datasets: [{
-          label: 'Total Bookings',
-          data: [
-            stats.bookings_pending,
-            stats.bookings_in_progress,
-            stats.bookings_completed,
-            stats.bookings_declined
-          ],
-          backgroundColor: [
-            'rgba(255, 193, 7, 0.7)',
-            'rgba(13, 202, 240, 0.7)',
-            'rgba(40, 167, 69, 0.7)',
-            'rgba(220, 53, 69, 0.7)'
-          ],
-          borderColor: [
-            'rgba(255, 193, 7, 1)',
-            'rgba(13, 202, 240, 1)',
-            'rgba(40, 167, 69, 1)',
-            'rgba(220, 53, 69, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  });
-</script>
-</script>
-{% endblock %}
+{% endfor %} {% endblock %} {% block scripts %} {% endblock %}

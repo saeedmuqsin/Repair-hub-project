@@ -15,7 +15,7 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'saeedmuqsin2@gmail.com'   # Replace with your email
     MAIL_PASSWORD = 'hwdxayxkfqehoovp'
-    MAIL_DEFAULT_SENDER = ('RepairHub', 'saeedmuqsin2@gmail.com')  # Use App Password (not Gmail password) - Set as environment variable in production
+    MAIL_DEFAULT_SENDER = ('Fix-Point Hub', 'saeedmuqsin2@gmail.com')  # Use App Password (not Gmail password) - Set as environment variable in production
    
     
 

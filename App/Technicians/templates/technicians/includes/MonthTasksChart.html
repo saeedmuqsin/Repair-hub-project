@@ -1,0 +1,118 @@
+<div class="w-full h-[400px] bg-white rounded-lg shadow-lg p-6">
+  <div class="mb-6">
+    <h2 class="text-lg font-medium text-gray-800">
+      Monthly Bookings Completed
+    </h2>
+    <p class="text-gray-500 text-sm mt-1">
+      Tracking completed bookings over the past 12 months
+    </p>
+  </div>
+
+  <div class="relative h-[290px]">
+    <canvas id="monthTasksChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById("monthTasksChart").getContext("2d");
+
+  fetch("/technician/bookings-per-month")
+    .then((res) => res.json())
+    .then((data) => {
+      // Months of the year
+      let months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      let chartData = new Array(12).fill(0);
+
+      for (let month in data) {
+        chartData[month - 1] = data[month];
+      }
+
+      /* Creates a line chart to display the data of the month booking
+    tasks completed in every year*/
+      CreateChart(months, chartData);
+    });
+
+  /* Function that create line chart using the chart.js Library */
+  function CreateChart(labels, data) {
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Bookings Completed",
+            data: data,
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59, 130, 246, 0.1)",
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointBackgroundColor: "#3b82f6",
+            pointBorderColor: "#fff",
+            pointBorderWidth: 2,
+            pointHoverRadius: 7,
+            hoverBackgroundColor: "#1e40af",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: "top",
+            labels: {
+              font: { size: 14, weight: "bold" },
+              color: "#374151",
+              padding: 15,
+              usePointStyle: true,
+            },
+          },
+          grid: {
+            display: true,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: "rgba(0, 0, 0, 0.05)",
+              drawBorder: false,
+            },
+            ticks: {
+              color: "#6b7280",
+              font: { size: 12 },
+            },
+          },
+          x: {
+            grid: {
+              display: false,
+              drawBorder: false,
+            },
+            ticks: {
+              color: "#6b7280",
+              font: { size: 12 },
+            },
+          },
+        },
+      },
+    });
+  }
+</script>

@@ -1,6 +1,5 @@
 {% extends "base.html" %} {% block head %}
 
-
 <style>
   @keyframes fadeIn {
     from {
@@ -18,121 +17,180 @@
     animation: fadeIn 0.3s ease-out;
   }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 
 <!-- stats cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-
   <div class="bg-white rounded-lg shadow p-4 flex items-center">
-    <i class="fa-solid fa-wrench text-center p-5 bg-blue-100 text-blue-500 rounded-full"></i>
+    <i
+      class="fa-solid fa-wrench text-center p-5 bg-blue-100 text-blue-500 rounded-full"
+    ></i>
     <div class="mx-3">
       <p class="text-sm text-gray-500">Total Requests</p>
-      <p class="text-lg font-medium text-gray-800">{{ total_bookings }} </p>
+      <p class="text-lg font-medium text-gray-800">{{ total_bookings }}</p>
     </div>
   </div>
 
   <div class="bg-white rounded-lg shadow p-4 flex items-center">
-    <i class="fa-solid fa-check text-center p-5 bg-green-100 text-green-500 rounded-full"></i>
+    <i
+      class="fa-solid fa-check text-center p-5 bg-green-100 text-green-500 rounded-full"
+    ></i>
     <div class="mx-3">
       <p class="text-sm text-gray-500">Completed Requests</p>
-      <p class="text-lg font-medium text-gray-800">{{ completed_bookings }} </p>
+      <p class="text-lg font-medium text-gray-800">{{ completed_bookings }}</p>
     </div>
   </div>
 
   <div class="bg-white rounded-lg shadow p-4 flex items-center">
-    <i class="fa-solid fa-hourglass-half text-center p-5 bg-yellow-100 text-yellow-500 rounded-full"></i>
+    <i
+      class="fa-solid fa-hourglass-half text-center p-5 bg-yellow-100 text-yellow-500 rounded-full"
+    ></i>
     <div class="mx-3">
       <p class="text-sm text-gray-500">Pending Requests</p>
-      <p class="text-lg font-medium text-gray-800">{{ pending_bookings }} </p>
+      <p class="text-lg font-medium text-gray-800">{{ pending_bookings }}</p>
     </div>
   </div>
 
   <div class="bg-white rounded-lg shadow p-4 flex items-center">
-    <i class="fa-solid fa-xmark text-center p-5 bg-red-100 text-red-500 rounded-full"></i>
+    <i
+      class="fa-solid fa-xmark text-center p-5 bg-red-100 text-red-500 rounded-full"
+    ></i>
     <div class="mx-3">
       <p class="text-sm text-gray-500">Cancelled Requests</p>
-      <p class="text-lg font-medium text-gray-800">{{ cancelled_bookings }} </p>
+      <p class="text-lg font-medium text-gray-800">{{ cancelled_bookings }}</p>
     </div>
   </div>
-
 </div>
 
 <!-- Recents Bookings -->
-<div class="px-5 pt-2.5 bg-white rounded-lg shadow mx-4 mt-2.5 overflow-y-scroll h-[400px]">
-  <h2 class="text-lg md:text-xl lg:text-2xl font-semibold mt-4">Active Bookings</h2>
-  <p class="text-gray-600 mt-0.5 mb-4 block text-sm">All bookings made by your account includes appliance, book date,
-    and status.</p>
-  <hr>
+<div
+  class="px-5 pt-2.5 bg-white rounded-lg shadow mx-4 mt-2.5 overflow-y-scroll h-[400px]"
+>
+  <h2 class="text-lg md:text-xl lg:text-2xl font-semibold mt-4">
+    Active Bookings
+  </h2>
+  <p class="text-gray-600 mt-0.5 mb-4 block text-sm">
+    All bookings made by your account includes appliance, book date, and status.
+  </p>
+  <hr />
 
   <!-- Bookings -->
   {% if bookings|length == 0 %}
   <div class="text-center mt-10">
     <i class="fa-solid fa-box-open text-gray-300 text-6xl"></i>
-    <p class="text-gray-500 mt-4">No bookings found. Start by booking a repair!</p>
+    <p class="text-gray-500 mt-4">
+      No bookings found. Start by booking a repair!
+    </p>
   </div>
-  {% elif bookings|length > 0 %}
-  {% for booking in bookings %}
+  {% elif bookings|length > 0 %} {% for booking in bookings %}
   <div class="p-2 my-2.5 md:grid lg:grid grid-rows-1 grid-flow-col gap-4">
-
     <!-- device details -->
     <div class="flex items-center">
       {% if booking.device_type == "phone" %}
-      <i class="fa-solid fa-mobile bg-blue-300 text-white p-3 text-md rounded-md"></i>
+      <i
+        class="fa-solid fa-mobile bg-blue-300 text-white p-3 text-md rounded-md"
+      ></i>
 
       {% elif booking.device_type == "laptop" %}
-      <i class="fa-solid fa-laptop bg-blue-300 text-white p-3 text-md rounded-md"></i>
+      <i
+        class="fa-solid fa-laptop bg-blue-300 text-white p-3 text-md rounded-md"
+      ></i>
+
+      {% else %}
+      <i
+        class="fa-solid fa-tablet bg-blue-300 text-white p-3 text-md rounded-md"
+      ></i>
       {% endif %}
       <div class="mx-2 mt-[-2px] block">
-        <h2 class="mt-1 font-medium">{{ booking.device_type | capitalize }}
-          {% if booking.status == "completed" %}
-          <span class="mx-6 text-xs text-green-500 bg-green-200 px-1.5 py-0.5 rounded-md">Completed</span>
+        <h2 class="mt-1 font-medium">
+          {{ booking.device_type | capitalize }} {% if booking.status ==
+          "completed" %}
+          <span
+            class="mx-6 text-xs text-green-500 bg-green-200 px-1.5 py-0.5 rounded-md"
+            >Completed</span
+          >
 
           {% elif booking.status == "Pending" %}
-          <span class="mx-6 text-xs text-yellow-500 bg-yellow-200 px-1.5 py-0.5 rounded-md">Pending</span>
+          <span
+            class="mx-6 text-xs text-yellow-500 bg-yellow-200 px-1.5 py-0.5 rounded-md"
+            >Pending</span
+          >
 
-          {% elif booking.status == "In progress" %}
-          <span class="mx-6 text-xs text-blue-500 bg-blue-200 px-1.5 py-0.5 rounded-md">In Progress</span>
+          {% elif booking.status == "In Progress" %}
+          <span
+            class="mx-6 text-xs text-blue-500 bg-blue-200 px-1.5 py-0.5 rounded-md"
+            >In Progress</span
+          >
 
           {% elif booking.status == "cancelled" %}
-          <span class="mx-6 text-xs text-red-500 bg-red-200 px-1.5 py-0.5 rounded-md">Cancelled</span>
+          <span
+            class="mx-6 text-xs text-red-500 bg-red-200 px-1.5 py-0.5 rounded-md"
+            >Cancelled</span
+          >
           {% endif %}
         </h2>
-        <p class="text-sm text-gray-600 mt-1">id: <span class="font-medium">{{ booking.id }}</span></p>
+        <p class="text-sm text-gray-600 mt-1">
+          id: <span class="font-medium">{{ booking.id }}</span>
+        </p>
       </div>
     </div>
 
     <!-- Technician details -->
 
     <div class="hidden md:hidden lg:flex items-center">
-      <img src="data:image/png;base64,{{ booking.Technician.Display_photo() }}" alt="{{ booking.Technician.username }}"
-        class="size-10 rounded-full block float-right" />
+      <img
+        src="data:image/png;base64,{{ booking.Technician.Display_photo() }}"
+        alt="{{ booking.Technician.username }}"
+        class="size-10 rounded-full block float-right"
+      />
       <div class="mx-2 mt-[-2px] block">
         <h2 class="mt-1 font-medium">{{ booking.Technician.name }}</h2>
-        <p class="text-sm text-gray-600 mt-[-1px]">{{ booking.Technician.services_offered }} </p>
+        <p class="text-sm text-gray-600 mt-[-1px]">
+          {{ booking.Technician.services_offered }}
+        </p>
       </div>
     </div>
 
     <div class="block mt-2.5">
-      <button onclick="openTracking.call(this)" data-id="{{ booking.id }}" data-booking_date="{{ booking.formatted_created_at() }}" data-status="{{ booking.status }}"
+      <button
+        onclick="openTracking.call(this)"
+        data-id="{{ booking.id }}"
+        data-booking_date="{{ booking.formatted_created_at() }}"
+        data-status="{{ booking.status }}"
         data-device="{{ booking.device_type | capitalize }}"
-        class="md:float-right lg:float-right text-white bg-blue-300 px-5 text-sm font-medium py-1.5 rounded-md">Track
-        Booking</button>
+        class="md:float-right lg:float-right text-white bg-blue-300 px-5 text-sm font-medium py-1.5 rounded-md"
+      >
+        Track Booking
+      </button>
     </div>
-
   </div>
-  <hr>
+  <hr />
   <!-- tracking modal (single, reused for all bookings) -->
-  <div id="trackingModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+  <div
+    id="trackingModal"
+    class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center"
+  >
     <div class="bg-white p-6 rounded-lg w-11/12 max-w-md modal-animate">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-sm md:text-md lg:text-xl font-semibold">Booking Details</h2>
-        <button onclick="closeTracking()" class="text-gray-500 hover:text-gray-700">&times;</button>
+        <h2 class="text-sm md:text-md lg:text-xl font-semibold">
+          Booking Details
+        </h2>
+        <button
+          onclick="closeTracking()"
+          class="text-gray-500 hover:text-gray-700"
+        >
+          &times;
+        </button>
       </div>
-      <p class="text-sm md:text-md lg:text-lg">ID: <span id="bookingId" class="font-medium"></span></p>
-      <p class="text-sm md:text-md lg:text-lg">Status: <span id="bookingStatus" class="font-medium"></span></p>
-      <p class="text-sm md:text-md lg:text-lg">Device: <span id="bookingDevice" class="font-medium"></span></p>
+      <p class="text-sm md:text-md lg:text-lg">
+        ID: <span id="bookingId" class="font-medium"></span>
+      </p>
+      <p class="text-sm md:text-md lg:text-lg">
+        Status: <span id="bookingStatus" class="font-medium"></span>
+      </p>
+      <p class="text-sm md:text-md lg:text-lg">
+        Device: <span id="bookingDevice" class="font-medium"></span>
+      </p>
 
       <!-- Tracking timeline -->
       <div class="mt-6 space-y-4">
@@ -143,7 +201,9 @@
           </div>
           <div>
             <p class="font-medium text-gray-800">Booking Placed</p>
-            <p class="text-xs text-gray-500 mt-1">Order confirmed and submitted at <span id="booking-date"></span></p>
+            <p class="text-xs text-gray-500 mt-1">
+              Order confirmed and submitted at <span id="booking-date"></span>
+            </p>
           </div>
         </div>
 
@@ -154,13 +214,18 @@
           </div>
           <div>
             <p class="font-medium text-gray-800">Technician Accepted</p>
-            <p class="text-xs text-gray-500 mt-1">Technician assigned to your booking</p>
+            <p class="text-xs text-gray-500 mt-1">
+              Technician assigned to your booking
+            </p>
           </div>
         </div>
 
         <div class="flex items-start">
           <div class="flex flex-col items-center mr-4">
-            <div id="progressStep" class="w-4 h-4 bg-gray-300 rounded-full"></div>
+            <div
+              id="progressStep"
+              class="w-4 h-4 bg-gray-300 rounded-full"
+            ></div>
             <div class="w-1 h-12 bg-gray-300"></div>
           </div>
           <div>
@@ -171,55 +236,51 @@
 
         <div class="flex items-start">
           <div class="flex flex-col items-center mr-4">
-            <div id="completeStep" class="w-4 h-4 bg-gray-300 rounded-full"></div>
+            <div
+              id="completeStep"
+              class="w-4 h-4 bg-gray-300 rounded-full"
+            ></div>
           </div>
           <div>
             <p class="font-medium text-gray-800">Repair Completed</p>
-            <p class="text-xs text-gray-500 mt-1">Your device is ready for pickup</p>
+            <p class="text-xs text-gray-500 mt-1">
+              Your device is ready for pickup
+            </p>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  {% endfor %}
-  {% endif %}
+  {% endfor %} {% endif %}
   <!--|||||||||-->
 </div>
 
-
 {% for message in get_flashed_messages() %}
- <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="alertdialog">
-        <div class="bg-white rounded-lg p-8 text-center">
-          <div class="mb-4">
-            <i class="fa-solid fa-circle-check text-green-500 text-5xl"></i>
-          </div>
-          <h3 class="text-xl font-medium text-gray-800 mb-2">Success!</h3>
-          <p class="text-gray-600 mb-6">{{ message }}</p>
-          <button type="button" onclick="this.closest('[role=alertdialog]').classList.add('hidden')"
-            class="bg-blue-400 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
-            Close
-          </button>
-        </div>
-      </div>
+<div
+  id="successModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  role="alertdialog"
+>
+  <div class="bg-white rounded-lg p-8 text-center">
+    <div class="mb-4">
+      <i class="fa-solid fa-circle-check text-green-500 text-5xl"></i>
+    </div>
+    <h3 class="text-xl font-medium text-gray-800 mb-2">Success!</h3>
+    <p class="text-gray-600 mb-6">{{ message }}</p>
+    <button
+      type="button"
+      onclick="this.closest('[role=alertdialog]').classList.add('hidden')"
+      class="bg-blue-400 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded"
+    >
+      Close
+    </button>
+  </div>
+</div>
 
-{% endfor %}
-{% endblock %}
-
-
-{% block scripts %}
+{% endfor %} {% endblock %} {% block scripts %}
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-    toastElList.forEach(function (toastEl) {
-      var toast = new bootstrap.Toast(toastEl);
-      toast.show();
-    });
-  });
-
-
   const modalHeader = document.getElementById("bookingId");
   const modalStatus = document.getElementById("bookingStatus");
   const modalDevice = document.getElementById("bookingDevice");
@@ -260,9 +321,13 @@
     if (status === "Pending" || status === "pending") {
       acceptStep.classList.remove("bg-gray-300");
       acceptStep.classList.add("bg-yellow-500");
-    
-    } else if (status === "In progress" || status === "in progress"  || status === "in_progress") {
-      acceptStep.classList.remove("bg-gray-300");
+    } else if (
+      status === "In progress" ||
+      status === "in progress" ||
+      status === "in_progress" ||
+      status === "In Progress"
+    ) {
+      acceptStep.classList.remove("bg-gray-300", "bg-yellow-500");
       acceptStep.classList.add("bg-blue-500");
       progressStep.classList.remove("bg-gray-300");
       progressStep.classList.add("bg-yellow-500");

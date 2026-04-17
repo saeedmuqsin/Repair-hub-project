@@ -1,0 +1,107 @@
+{% extends 'technicians.base.html' %} {% block head %} {% endblock %} {% block
+content %}
+
+<div
+  class="container w-[95%] mt-4 bg-white p-4 mx-auto rounded-md h-[70%] overflow-y-scroll"
+>
+  <h2 class="text-lg font-medium">Completed Booking Requests</h2>
+  <p class="text-sm text-gray-600">
+    View all completed booking requests from customers.
+  </p>
+
+  {% if completed_bookings %}
+  <table class="min-w-full divide-y divide-gray-200 mt-6">
+    <thead class="">
+      <tr>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Name
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Device Type
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Status
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Completed Date
+        </th>
+        <th
+          scope="col"
+          class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"
+        >
+          Service Cost(Gh₵)
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      {% for booking in completed_bookings[::-1] %}
+      <tr>
+        <td class="px-6 py-4 white flex items-center">
+          <img
+            class="h-9 w-9 rounded-full mr-3"
+            src="data:image/png;base64,{{ booking.user.User_ProfilePhoto() }}"
+            alt="Profile Photo"
+          />
+          <div class="block">
+            <span class="text-sm font-medium text-gray-900 block"
+              >{{ booking.user.username }}</span
+            >
+            <span class="text-xs font-medium text-gray-500 block"
+              >bid: #{{ booking.id }}</span
+            >
+          </div>
+        </td>
+        <td
+          class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium"
+        >
+          {{ booking.device_type | capitalize }}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          {% if booking.status == "Completed" %}
+          <span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+            >{{ booking.status }}</span
+          >
+          {% else %}
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+            >{{ booking.status }}</span
+          >
+          {% endif %}
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold">
+            {% if booking.completed_date == "Not yet"%}
+              --
+            {% else %}
+            {{ booking.completed_date }}
+            {% endif %}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          <span class="px-2 inline-flex text-md leading-5 font-semibold rounded-full">
+            {% if booking.get_BookingInvoice().total_cost %}
+              {{ booking.get_BookingInvoice().total_cost }}
+            {% else %}
+               --
+            {% endif %}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %} {% block scripts %} {% endblock %}

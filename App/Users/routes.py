@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 import geocoder
 
-from App.models import db, Users, Booking, Technician
+from App.models import db, Users, Booking, Technician, Invoice
 from App.extensions import mail
 from . import users_bp
 
@@ -24,7 +24,7 @@ def home():
         "pending_bookings": bookings_query.filter_by(status='Pending').count(),
         "cancelled_bookings": bookings_query.filter_by(status='Cancelled').count(),
         "bookings": Booking.query.filter(
-            Booking.status.in_(['Pending', 'In progress']),
+            Booking.status.in_(['Pending', 'In Progress']),
             Booking.user_id == user_id
         ).order_by(Booking.created_at.desc()).all()
     }
@@ -38,21 +38,20 @@ def booking_appointment():
     return render_template('bookingRepair.html', technicians=technicians)
 
 
-@users_bp.route('/appointment_booking/', methods=['GET', 'POST'])
+@users_bp.route('/appointment_booking', methods=['GET', 'POST'])
 @login_required
 def proceed_appointment():
-    technician_id = request.args.get('id')
-
     if request.method == 'POST':
+        technician_id = request.form.get('technician_id')
         device_type = request.form.get('device-type')
         problem_description = request.form.get('description')
         device_brand = request.form.get('device_brand')
         photo = request.files.get('device-photo')
 
         # Validate required fields
-        if not all([device_type, problem_description, device_brand]):
+        if not all([technician_id, device_type, problem_description, device_brand]):
             flash('Please fill in all required fields.')
-            return redirect(url_for('users.proceed_appointment', id=technician_id))
+            return redirect(url_for('users.booking_appointment'))
 
         new_booking = Booking(
             id=str(uuid.uuid4()),
@@ -67,10 +66,12 @@ def proceed_appointment():
 
         db.session.add(new_booking)
         db.session.commit()
+
         flash('Your booking has been created successfully!')
-        return redirect(url_for('users.home', id=current_user.id))
+        return redirect(f"/users/dashboard")
     
-    return render_template('bookingRepair.html')
+    technicians = Technician.query.filter_by(is_approved=True).all()
+    return render_template('bookingRepair.html', technicians=technicians)
 
 
 @users_bp.route('/booking/history')
@@ -108,34 +109,3 @@ def profile_settings():
     }
     return render_template("settings.html", **context)
 
-
-@users_bp.route('/send_password_reset')
-@login_required
-def send_message():
-    reset_link = url_for('users.reset_password', id=current_user.id, _external=True)
-    msg = Message('Password Reset Request', recipients=[current_user.email])
-    msg.body = f'Click the link to reset your password: {reset_link}'
-    
-    mail.send(msg)
-    flash('A password reset link has been sent to your email address.')
-    return redirect(url_for('users.home', id=current_user.id))
-
-
-@users_bp.route('/reset_password', methods=['GET', 'POST'])
-def reset_password():
-    user_id = request.args.get('id')
-    user = Users.query.filter_by(id=user_id).first_or_404()
-
-    if request.method == 'POST':
-        new_password = request.form.get('new_password')
-        
-        if not new_password or len(new_password) < 8:
-            flash('Password must be at least 8 characters long.')
-            return render_template('reset_password.html')
-        
-        user.password = generate_password_hash(new_password)
-        db.session.commit()
-        flash('Your password has been reset successfully!')
-        return redirect(url_for('auth.login'))
-    
-    return render_template('reset_password.html')

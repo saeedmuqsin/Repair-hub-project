@@ -1,362 +1,73 @@
-{% extends 'admin.base.html' %}
-
-{% block head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    .top_nav {
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        h3 {
-            font-size: 1.5rem;
-            margin: 0px 10px;
-        }
-
-        .profile {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .profile i {
-            font-size: 1rem;
-            padding: 3px 7px;
-            border-radius: 10px;
-            background-color: blue;
-            margin: 0px 7px;
-            color: white;
-        }
-
-        .profile p.initials {
-            padding: 5px 10px;
-            font-weight: 500;
-            margin: -10px 3px;
-            background-color: #5BC3EB;
-            color: #ffffff;
-            border-radius: 10px;
-            font-size: 15px;
-        }
-
-        .profile p.username {
-            font-size: 1rem;
-            font-weight: 500;
-            margin: 0px 3px;
-        }
-
-        .profile p:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-    }
-
-    .card-stat {
-        border-radius: 10px;
-        padding: 20px;
-        transition: transform 0.2s;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        background-color: #5BC3EB;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .card-stat svg {
-        height: 70px;
-        /* background-color: #fff; */
-        color: #5BC3EB;
-        padding: 0px 20px;
-        border-radius: 10px;
-        width: 70px;
-        margin-top: -10px;
-    }
-
-    .card-stat p {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-top: -7px;
-    }
-
-    .card-stat:hover {
-        transform: translateY(-5px);
-    }
-
-    .card-icon {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-    }
-
-    .stats-board,
-    .profile-board {
-        padding: 20px;
-        width: 100%;
-        border-radius: 10px;
-        background-color: #ffffff;
-        height: 350px;
-    }
-    
-    .profile-board {
-        overflow-y: scroll;
-
-        .top-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .input-group {
-                max-width: 300px;
-                width: 100%;
-                input {
-                    font-size: 13px;
-                }
-            }
-        }
-
-        .profiles {
-            display: block;
-            width: 100%;
-
-        }
-
-        .profile {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0;
-            
-        }
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="top_nav">
-    <h3>Welcome Admin!</h3>
-
-    <div class="profile">
-        <p class="initials">{{ current_user.username[:2] | upper() }}</p>
-        <p class="username">{{ current_user.username }}</p>
+{% extends 'admin.base.html' %} {% block head %} {% endblock %} {% block content
+%}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-scroll text-center p-5 bg-blue-100 text-blue-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Total Bookings</p>
+      <p class="text-lg font-medium text-gray-800">{{ total_bookings }}</p>
     </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-users text-center p-5 bg-green-100 text-green-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Active Users</p>
+      <p class="text-lg font-medium text-gray-800">{{ active_users }}</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-user-check text-center p-5 bg-yellow-100 text-yellow-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Active Brands</p>
+      <p class="text-lg font-medium text-gray-800">{{ active_brands }}</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-4 flex items-center">
+    <i
+      class="fa-solid fa-check text-center p-5 bg-purple-100 text-purple-500 rounded-full"
+    ></i>
+    <div class="mx-3">
+      <p class="text-sm text-gray-500">Generated Invoice</p>
+      <p class="text-lg font-medium text-gray-800">{{ total_invoice }}</p>
+    </div>
+  </div>
 </div>
 
-<!-- card for total users, total booking,  -->
-<div class="row g-3 mb-4 mt-4">
-    <div class="col-md-4 col-lg-4" id="total-users-card">
-        <div class="card-stat">
-            <div class="body">
-                <h5 class="mx-3">Total Users</h5>
-                <p class="mx-3">{{ context.total_users }}</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white"
-                viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                <path
-                    d="M320 80C377.4 80 424 126.6 424 184C424 241.4 377.4 288 320 288C262.6 288 216 241.4 216 184C216 126.6 262.6 80 320 80zM96 152C135.8 152 168 184.2 168 224C168 263.8 135.8 296 96 296C56.2 296 24 263.8 24 224C24 184.2 56.2 152 96 152zM0 480C0 409.3 57.3 352 128 352C140.8 352 153.2 353.9 164.9 357.4C132 394.2 112 442.8 112 496L112 512C112 523.4 114.4 534.2 118.7 544L32 544C14.3 544 0 529.7 0 512L0 480zM521.3 544C525.6 534.2 528 523.4 528 512L528 496C528 442.8 508 394.2 475.1 357.4C486.8 353.9 499.2 352 512 352C582.7 352 640 409.3 640 480L640 512C640 529.7 625.7 544 608 544L521.3 544zM472 224C472 184.2 504.2 152 544 152C583.8 152 616 184.2 616 224C616 263.8 583.8 296 544 296C504.2 296 472 263.8 472 224zM160 496C160 407.6 231.6 336 320 336C408.4 336 480 407.6 480 496L480 512C480 529.7 465.7 544 448 544L192 544C174.3 544 160 529.7 160 512L160 496z" />
-            </svg>
-        </div>
-    </div>
-
-    <div class="col-md-4 col-lg-4">
-        <div class="card-stat">
-            <div class="body">
-                <h5 class="mx-3">Total Bookings</h5>
-                <p class="mx-3">{{ context.total_booking }}</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white"
-                viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                <path
-                    d="M224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64zM224 320C206.3 320 192 334.3 192 352L192 416C192 433.7 206.3 448 224 448L416 448C433.7 448 448 433.7 448 416L448 352C448 334.3 433.7 320 416 320L224 320z" />
-            </svg>
-        </div>
-    </div>
-    <div class="col-md-4 col-lg-4">
-        <div class="card-stat">
-            <div class="body">
-                <h5 class="mx-3">Approved Profiles</h5>
-                <p class="mx-3">{{ context.total_profiles }}</p>
-            </div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white"
-                viewBox="0 0 640 640"><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                <path
-                    d="M286 368C384.5 368 464.3 447.8 464.3 546.3C464.3 562.7 451 576 434.6 576L78 576C61.6 576 48.3 562.7 48.3 546.3C48.3 447.8 128.1 368 226.6 368L286 368zM585.7 169.9C593.5 159.2 608.5 156.8 619.2 164.6C629.9 172.4 632.3 187.4 624.5 198.1L522.1 338.9C517.9 344.6 511.4 348.3 504.4 348.7C497.4 349.1 490.4 346.5 485.5 341.4L439.1 293.4C429.9 283.9 430.1 268.7 439.7 259.5C449.2 250.3 464.4 250.6 473.6 260.1L500.1 287.5L585.7 169.8zM256.3 312C190 312 136.3 258.3 136.3 192C136.3 125.7 190 72 256.3 72C322.6 72 376.3 125.7 376.3 192C376.3 258.3 322.6 312 256.3 312z" />
-            </svg>
-        </div>
-    </div>
+<!-- MonthlyChart and other stats component -->
+<div class="container p-2 w-full flex items-center">
+  {% include "includes/MonthCharts.html" %} {% include "includes/Rankings.html"
+  %}
 </div>
 
-<div class="row g-6">
-    <div class="col-lg-6">
-        <div class="stats-board">
-            <h5 class="mb-3"><span><i class="bi bi-activity"></i> </span>Daily Overview</h5>
-            <canvas id="barChart" class="mt-4"></canvas>
-        </div>
-
+{% for message in get_flashed_messages() %}
+<div
+  id="successModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  role="alertdialog"
+>
+  <div class="bg-white rounded-lg p-8 text-center">
+    <div class="mb-4">
+      <i class="fa-solid fa-circle-check text-green-500 text-5xl"></i>
     </div>
-
-    <div class="col-lg-6">
-        <div class="profile-board">
-            <div class="top-header">
-                <h5 class="mt-2"><i class="bi bi-person-lines-fill px-2"></i> Recent Profiles</h5>
-                <div class="input-group" style="max-width: 250px;">
-                    <input type="search" id="profile-search" class="form-control" placeholder="Search for profiles" aria-label="Search for profiles" autocomplete="off">
-                </div>
-            </div>
-
-            <div class="mt-2 p-2">
-
-                {% if context.all_profiles == [] %}
-                <p class="mt-5 text-center">No profiles found.</p>
-                {% else %}
-                <!-- profile -->
-                 {% for profile in context.all_profiles %}
-                    <div class="profile p-3">
-                        <div class="body d-flex align-items-center">
-                            <img src="data:image/png;base64, {{ profile.Display_photo() }}" alt="profile-img" width="50px" height="50px" style="border-radius: 360%;">
-                            <div class="d-block mx-2 mt-2">
-                                <h5 style="font-size: 0.95rem;">{{ profile.name }}</h5>
-                                <p style="margin-top: -5px; font-size: 0.75rem; font-weight: 500;">bookings: {{ profile.Total_Booking(profile.id) }}</ps>
-                            </div>
-                        </div>
-                        <button class="btn-sm btn btn-primary" data-bs-toggle="modal" data-bs-target="#profileModal{{ profile.id }}">view details</button>
-                    </div>
-                 {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-    
-        <!-- Modals for profile details -->
-        {% for profile in context.all_profiles %}
-        <div class="modal fade" id="profileModal{{ profile.id }}" tabindex="-1" aria-labelledby="profileModalLabel{{ profile.id }}" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="profileModalLabel{{ profile.id }}">Profile Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="text-center mb-3">
-                            <img src="data:image/png;base64,{{ profile.Display_photo() }}" alt="{{ profile.name }}" class="rounded-circle" width="80" height="80">
-                            <h5>{{ profile.name }}</h5>
-                        </div>
-                        <p><strong>ID:</strong> {{ profile.id }}</p>
-                        <p><strong>Creator:</strong> {{ profile.technician.username }}</p>
-                        <p><strong>Total Bookings:</strong> {{ profile.Total_Booking(profile.id) }}</p>
-                        <p><strong>Verification Status:</strong> {% if profile.is_approved %}<span class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning">Not Verified</span>{% endif %}</p>
-                        
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    
-    </div>
+    <h3 class="text-xl font-medium text-gray-800 mb-2">Success!</h3>
+    <p class="text-gray-600 mb-6">{{ message }}</p>
+    <button
+      type="button"
+      onclick="this.closest('[role=alertdialog]').classList.add('hidden')"
+      class="bg-blue-400 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded"
+    >
+      Close
+    </button>
+  </div>
 </div>
 
-{% endblock %}
-
-{% block script %}
-<script>
-    const ctx = document.getElementById('barChart').getContext('2d');
-    const stats = JSON.parse('{{ stats|tojson|safe }}');
-    const data = [
-        stats.users,
-        stats.bookings,
-        stats.profiles
-    ]
-
-    const barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Users', 'Bookings', 'Profiles'],
-            datasets: [{
-                label: 'Daily Data',
-                data: data,
-
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    grid: {
-                        display: false // Removes vertical grid lines
-                    }
-                },
-                y: {
-                    grid: {
-                        display: false // Removes horizontal grid lines
-                    }
-                }
-            },
-
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: false,
-                    text: 'Daily Statistic Overview',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
-                    }
-                }
-            }
-        },
-    });
-
-    // Search functionality for profiles
-    const searchInput = document.getElementById('profile-search');
-    const profiles = document.querySelectorAll('.profile-board .profile');
-    let debounceTimer;
-
-    searchInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            const query = this.value.trim().toLowerCase();
-            let hasResults = false;
-            profiles.forEach(profile => {
-                const name = profile.querySelector('h5').textContent.toLowerCase();
-                if (name.includes(query)) {
-                    profile.style.display = '';
-                    hasResults = true;
-                } else {
-                    profile.style.display = 'none';
-                }
-            });
-            // Handle no results message
-            let noResultsMsg = document.querySelector('.profile-board .mt-2 .no-search-results');
-            if (!hasResults && query !== '') {
-                if (!noResultsMsg) {
-                    noResultsMsg = document.createElement('p');
-                    noResultsMsg.className = 'mt-5 text-center no-search-results';
-                    noResultsMsg.textContent = 'No profiles match your search.';
-                    document.querySelector('.profile-board .mt-2').appendChild(noResultsMsg);
-                }
-            } else if (noResultsMsg) {
-                noResultsMsg.remove();
-            }
-        }, 300); // 300ms debounce
-    });
-</script>
-{% endblock %}
+{% endfor %} {% endblock %} {% block scripts %} {% endblock %}
