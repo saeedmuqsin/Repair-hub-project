@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import token
 from turtle import reset
-import uuid, secrets
+import uuid, secrets, os
 from flask import Flask, jsonify, request, redirect, url_for,flash, render_template
 from flask_login import login_user, logout_user, current_user
 from flask_mail import Message
@@ -17,8 +17,12 @@ def create_app():
     app = Flask(__name__)
 
     # configurations for api to be running
-    # Temporarily switch to DevelopmentConfig for local development
-    app.config.from_object(DevelopmentConfig)
+    # Use ProductionConfig if FLASK_ENV is production, otherwise DevelopmentConfig
+    env = os.getenv('FLASK_ENV', 'development')
+    if env == 'production':
+        app.config.from_object(ProductionConfig)
+    else:
+        app.config.from_object(DevelopmentConfig)
 
     # initializing extensions with the app
     db.init_app(app)
