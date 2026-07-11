@@ -18,26 +18,31 @@
     <!-- flash an alert message on top of the page -->
 
     <div class="block -mb-2.5">
-    {% for message in get_flashed_messages() %}
-        <div class="flex items-center bg-blue-200 p-2 rounded-md w-[90%] lg:w-2/5 md:w-2/5 mx-auto mt-5 text-white" id="alertMessage">
-            <div class="flex-shrink-0">
-                <i class="fa-solid fa-circle-check text-white"></i>
-            </div>
-            <div class="ml-3 text-white">
-                <p class="text-sm text-white">{{ message }}</p>
-            </div>
-            <button id="close-btn" class="ml-auto mx-2 -my-1.5 bg-blue-200 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-200 focus:ring-gray-500">
-                <span class="sr-only">Dismiss</span>
-                <i class="fa-solid fa-xmark text-white"></i>
-            </button>
-
+      {% for message in get_flashed_messages() %}
+      <div
+        class="flex items-center bg-blue-200 p-2 rounded-md w-[90%] lg:w-2/5 md:w-2/5 mx-auto mt-5 text-white"
+        id="alertMessage"
+      >
+        <div class="flex-shrink-0">
+          <i class="fa-solid fa-circle-check text-white"></i>
         </div>
-        {% endfor %}
+        <div class="ml-3 text-white">
+          <p class="text-sm text-white">{{ message }}</p>
+        </div>
+        <button
+          id="close-btn"
+          class="ml-auto mx-2 -my-1.5 bg-blue-200 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-200 focus:ring-gray-500"
+        >
+          <span class="sr-only">Dismiss</span>
+          <i class="fa-solid fa-xmark text-white"></i>
+        </button>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- login container -->
     <div
-      class="w-[90%] h-[520px] lg:w-2/5 bg-white p-4 mx-auto mt-20 md:mt-10 lg:mt-5.5 pb-6 rounded-md"
+      class="w-[90%] h-[520px] lg:w-2/5 bg-white p-4 mx-auto mt-20 md:mt-24 pb-6 rounded-md"
     >
       <div class="block pt-5">
         <img

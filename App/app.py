@@ -97,7 +97,7 @@ def create_app():
                     login_user(existingUser)
                     return redirect('/technician/create_profile')
                 
-            elif email == "admin@fph.com" and password =='admin':
+            elif email == "admin@info.com" and password =='admin':
                 return redirect("/admin/dashboard")
 
             elif existingUser and existingUser.check_password(password) == True and existingUser.role == "customer" and existingUser.is_active == False:
