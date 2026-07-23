@@ -10,11 +10,12 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
     PERMANENT_SESSION_LIFETIME= timedelta(minutes=120)
+
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'saeedmuqsin2@gmail.com'   # Replace with your email
-    MAIL_PASSWORD = 'cfbhgmvjnyrcpqkl'
+    MAIL_PASSWORD = 'gvjwpvsqpxvofxki'
     MAIL_DEFAULT_SENDER = ('Fix-Point Hub', 'saeedmuqsin2@gmail.com')  # Use App Password (not Gmail password) - Set as environment variable in production
    
     
@@ -22,7 +23,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     environment = 'development'
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:hellosaeed@localhost:5432/repair_hub'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:hellosaeed@localhost:5432/repair_hub_db'
 
 class ProductionConfig(Config):
     environment = 'production'

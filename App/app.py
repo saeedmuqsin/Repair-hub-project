@@ -15,15 +15,8 @@ from .extensions import migrate, db, mail, moment, login_manager
 
 def create_app():
     app = Flask(__name__)
-
-    # configurations for api to be running
-    # Use ProductionConfig if FLASK_ENV is production, otherwise DevelopmentConfig
-    env = os.getenv('FLASK_ENV', 'development')
-    if env == 'production':
-        app.config.from_object(ProductionConfig)
-    else:
-        app.config.from_object(DevelopmentConfig)
-
+    app.config.from_object(DevelopmentConfig)
+    
     # initializing extensions with the app
     db.init_app(app)
     migrate.init_app(app, db)
