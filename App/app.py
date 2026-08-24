@@ -15,7 +15,7 @@ from .extensions import migrate, db, mail, moment, login_manager
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(DevelopmentConfig)
+    app.config.from_object(ProductionConfig)
     
     # initializing extensions with the app
     db.init_app(app)
@@ -125,7 +125,6 @@ def create_app():
                 
             else:
                 flash("Invalid or expired activation code. Please try again.")
-                user.AccountActivation()
                 return redirect('/account-activation')
         
         return render_template('AccountActivation.html', code=account_activation_code)   
@@ -195,7 +194,6 @@ def create_app():
                     new_user.role = role
                     db.session.add(new_user)
                     db.session.commit()
-                    # new_user.AccountActivation()
                     return redirect(f'/account-activation?code={new_user.AccountActivation()}')
                                                 
         return render_template('Register.html')
